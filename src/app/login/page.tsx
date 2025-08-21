@@ -2,13 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { LanguageSwitcher } from '@/components/language-switcher'
 
 export default function LoginPage() {
   const [password, setPassword] = useState('')
@@ -16,7 +14,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  const t = useTranslations('login')
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -60,10 +57,10 @@ export default function LoginPage() {
           window.location.href = '/admin'
         }, 100)
       } else {
-        setError(data.error === 'Invalid password' ? t('invalidPassword') : t('networkError'))
+        setError(data.error === 'Invalid password' ? '密碼錯誤' : '網路錯誤，請重試')
       }
     } catch {
-      setError(t('networkError'))
+      setError('網路錯誤，請重試')
     } finally {
       setIsLoading(false)
     }
@@ -71,22 +68,17 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-      {/* Language Switcher */}
-      <div className="absolute top-4 right-4">
-        <LanguageSwitcher />
-      </div>
-
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>{t('title')}</CardTitle>
+          <CardTitle>管理員登入</CardTitle>
           <CardDescription>
-            {t('subtitle')}
+            請輸入密碼以進入管理後台
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password">{t('password')}</Label>
+              <Label htmlFor="password">密碼</Label>
               <Input
                 id="password"
                 type="password"
@@ -108,7 +100,7 @@ export default function LoginPage() {
                 htmlFor="remember-me" 
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                {t('rememberMe')}
+                記住我 1 年
               </Label>
             </div>
 
@@ -123,7 +115,7 @@ export default function LoginPage() {
               className="w-full" 
               disabled={isLoading}
             >
-              {isLoading ? t('signingIn') : t('signIn')}
+              {isLoading ? '登入中...' : '登入'}
             </Button>
           </form>
         </CardContent>
