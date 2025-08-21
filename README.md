@@ -58,7 +58,6 @@ A complete short URL service built with Next.js 15, featuring URL shortening, cl
    - `REDIS_URL`: Redis connection string
    - `ADMIN_PASSWORD`: Admin panel password
    - `JWT_SECRET`: JWT signing secret
-   - `NEXT_PUBLIC_BASE_URL`: Application base URL
 
 4. **Start Development Server**
    ```bash

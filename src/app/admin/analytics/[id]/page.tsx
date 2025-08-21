@@ -41,7 +41,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
   const router = useRouter()
   const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null)
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
 
   useEffect(() => {
     params.then(setResolvedParams)

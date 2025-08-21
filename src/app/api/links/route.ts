@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       expiresAt: expiresAt ? new Date(expiresAt) : undefined,
       clickLimit: clickLimit ? parseInt(clickLimit) : undefined
     })
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'
     
     return NextResponse.json({
       id: result.id,
