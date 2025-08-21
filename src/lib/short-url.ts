@@ -13,7 +13,16 @@ export async function isSlugAvailable(slug: string): Promise<boolean> {
   return !existing
 }
 
-export async function createShortUrl(targetUrl: string, customSlug?: string): Promise<{ slug: string; id: string }> {
+export async function createShortUrl(
+  targetUrl: string, 
+  customSlug?: string,
+  options?: {
+    title?: string;
+    tag?: string;
+    expiresAt?: Date;
+    clickLimit?: number;
+  }
+): Promise<{ slug: string; id: string }> {
   let slug = customSlug
 
   if (slug) {
@@ -30,7 +39,11 @@ export async function createShortUrl(targetUrl: string, customSlug?: string): Pr
   const link = await db.link.create({
     data: {
       slug: slug!,
-      targetUrl
+      targetUrl,
+      title: options?.title,
+      tag: options?.tag,
+      expiresAt: options?.expiresAt,
+      clickLimit: options?.clickLimit
     }
   })
 
@@ -70,13 +83,20 @@ export async function recordClick(linkId: string, request: Request) {
   
   const country = getCountryFromIP(ip)
 
-  await db.click.create({
-    data: {
-      linkId,
-      referrer,
-      userAgent,
-      device,
-      country
-    }
-  })
+  // Record click and update lastClickAt
+  await Promise.all([
+    db.click.create({
+      data: {
+        linkId,
+        referrer,
+        userAgent,
+        device,
+        country
+      }
+    }),
+    db.link.update({
+      where: { id: linkId },
+      data: { lastClickAt: new Date() }
+    })
+  ])
 }

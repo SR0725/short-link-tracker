@@ -6,20 +6,27 @@ A complete short URL service built with Next.js 15, featuring URL shortening, cl
 
 - **URL Shortening**: Convert long URLs into short, shareable links
 - **Custom Slugs**: Option to create custom short codes
+- **Advanced Link Management**: Add titles, tags, expiration dates, and click limits
+- **Table Sorting**: Sort links by various criteria (date, clicks, tags, etc.)
 - **Click Tracking**: Track clicks with detailed analytics
 - **Analytics Dashboard**: View click trends, referrers, device types, and geographic data
+- **QR Code Generation**: Generate customizable QR codes with logo support
 - **CSV Export**: Export analytics data for external analysis
+- **Personalized 404 Pages**: Customize 404 page content and branding
 - **Admin Authentication**: Secure admin panel with "Remember Me" functionality
-- **Modern UI**: Built with shadcn/ui components and Tailwind CSS
+- **Settings Management**: Centralized configuration for personalization
+- **Modern UI**: Built with shadcn/ui components and Tailwind CSS (Traditional Chinese)
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 with App Router
 - **Database**: PostgreSQL with Prisma ORM
 - **Caching**: Redis for performance optimization
-- **UI**: Tailwind CSS + shadcn/ui components
+- **UI**: Tailwind CSS + shadcn/ui components  
 - **Charts**: Recharts for analytics visualization
+- **QR Codes**: qrcode.react with custom styling support
 - **Authentication**: JWT with secure HTTP-only cookies
+- **File Upload**: Image handling for logo customization
 
 ## Setup
 
@@ -76,16 +83,27 @@ A complete short URL service built with Next.js 15, featuring URL shortening, cl
 
 3. **Create Short URLs**
    - Enter target URL in the admin dashboard
-   - Optionally specify custom slug
+   - Optionally specify custom slug, title, tag, expiration date, and click limit
+   - Generate QR codes with customizable styles
    - Copy and share the generated short URL
 
-4. **View Analytics**
+4. **Manage Links**
+   - Sort links by title, tag, clicks, creation date, last click, or expiration
+   - Click table headers to toggle ascending/descending order
+   - View comprehensive link information with status indicators
+
+5. **View Analytics**
    - Click "Analytics" button for any short URL
    - View click trends over 7 or 30 days
    - See top referrers, device distribution, and geographic data
    - Export data as CSV for external analysis
 
-5. **Access Short URLs**
+6. **Customize Settings**
+   - Upload logo for QR codes and 404 pages
+   - Set default QR code style preferences
+   - Personalize 404 page content and appearance
+
+7. **Access Short URLs**
    - Visit `http://localhost:3000/{slug}` to redirect to target URL
    - Each visit is automatically tracked with analytics data
 
@@ -97,10 +115,15 @@ A complete short URL service built with Next.js 15, featuring URL shortening, cl
 - `GET /api/auth/check` - Check authentication status
 
 ### Links Management
-- `GET /api/links` - Get all short links (requires auth)
-- `POST /api/links` - Create new short link (requires auth)
+- `GET /api/links` - Get all short links with sorting support (requires auth)
+- `POST /api/links` - Create new short link with extended options (requires auth)
 - `GET /api/links/[id]/analytics` - Get link analytics (requires auth)
 - `GET /api/links/[id]/export` - Export analytics as CSV (requires auth)
+
+### Settings Management
+- `GET /api/settings` - Get admin settings (requires auth)
+- `PUT /api/settings` - Update settings (requires auth)
+- `GET /api/settings/public` - Get public settings for 404 page
 
 ### URL Redirection
 - `GET /[slug]` - Redirect to target URL and track click
@@ -111,6 +134,11 @@ A complete short URL service built with Next.js 15, featuring URL shortening, cl
 - `id`: Unique identifier
 - `slug`: Short code for the URL
 - `target_url`: Original long URL
+- `title`: Optional descriptive title
+- `tag`: Grouping/category tag
+- `expires_at`: Optional expiration date
+- `click_limit`: Optional maximum click limit
+- `last_click_at`: Timestamp of most recent click
 - `created_at`: Creation timestamp
 - `updated_at`: Last update timestamp
 
@@ -122,6 +150,17 @@ A complete short URL service built with Next.js 15, featuring URL shortening, cl
 - `user_agent`: Browser user agent
 - `device`: Device type (desktop/mobile)
 - `country`: Country code (if available)
+
+### Settings Table
+- `id`: Unique identifier
+- `logo_url`: URL for uploaded logo image
+- `default_qr_style`: Default QR code style (square/rounded/dots)
+- `custom_404_title`: Custom 404 page title
+- `custom_404_description`: Custom 404 page description
+- `custom_404_button_text`: Custom 404 page button text
+- `custom_404_button_url`: Custom 404 page button URL
+- `created_at`: Creation timestamp
+- `updated_at`: Last update timestamp
 
 ## Security Features
 
