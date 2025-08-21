@@ -1,0 +1,137 @@
+{
+  "common": {
+    "loading": "載入中...",
+    "error": "錯誤",
+    "success": "成功",
+    "save": "儲存",
+    "cancel": "取消",
+    "delete": "刪除",
+    "edit": "編輯",
+    "create": "建立",
+    "back": "返回",
+    "next": "下一個",
+    "previous": "上一個",
+    "search": "搜尋",
+    "copy": "複製",
+    "export": "匯出",
+    "visit": "訪問"
+  },
+  "navigation": {
+    "home": "首頁",
+    "admin": "管理後台",
+    "login": "登入",
+    "logout": "登出",
+    "dashboard": "儀錶板",
+    "analytics": "分析"
+  },
+  "home": {
+    "title": "短網址追蹤器",
+    "subtitle": "簡單強大的網址縮短服務，具備完整分析功能",
+    "features": {
+      "shorten": {
+        "title": "縮短網址",
+        "description": "將長網址轉換為簡短易分享的連結"
+      },
+      "analytics": {
+        "title": "追蹤分析",
+        "description": "監控點擊數、來源和地理位置資料"
+      },
+      "manage": {
+        "title": "管理連結",
+        "description": "組織和控制您的短網址"
+      }
+    },
+    "accessAdmin": "進入管理後台",
+    "adminRequired": "需要管理員登入才能建立和管理連結"
+  },
+  "login": {
+    "title": "管理員登入",
+    "subtitle": "請輸入密碼以進入管理後台",
+    "password": "密碼",
+    "rememberMe": "記住我 1 年",
+    "signIn": "登入",
+    "signingIn": "登入中...",
+    "invalidPassword": "密碼錯誤",
+    "networkError": "網路錯誤，請重試。"
+  },
+  "admin": {
+    "title": "短網址管理器",
+    "subtitle": "建立和管理您的短網址",
+    "createNew": {
+      "title": "建立新短網址",
+      "subtitle": "為您的長網址產生短連結",
+      "targetUrl": "目標網址",
+      "targetUrlPlaceholder": "https://example.com/very-long-url",
+      "customSlug": "自訂短碼（選填）",
+      "customSlugPlaceholder": "my-custom-slug",
+      "createButton": "建立短網址",
+      "creating": "建立中..."
+    },
+    "linksList": {
+      "title": "您的短網址",
+      "subtitle": "管理已建立的短連結並查看分析資料",
+      "noLinks": "還沒有短網址！在上方建立您的第一個吧！",
+      "headers": {
+        "shortUrl": "短網址",
+        "targetUrl": "目標網址",
+        "clicks": "點擊數",
+        "created": "建立時間",
+        "actions": "操作"
+      }
+    },
+    "errors": {
+      "invalidUrl": "無效的網址格式",
+      "slugExists": "自訂短碼已存在",
+      "networkError": "網路錯誤，請重試。",
+      "createFailed": "建立短網址失敗"
+    }
+  },
+  "analytics": {
+    "title": "分析",
+    "backToDashboard": "返回儀錶板",
+    "exportCsv": "匯出 CSV",
+    "visitLink": "訪問連結",
+    "overview": {
+      "totalClicks": "總點擊數",
+      "clicksInPeriod": "點擊數",
+      "created": "建立時間"
+    },
+    "timePeriod": "時間範圍",
+    "days": "{count} 天",
+    "timeline": {
+      "title": "點擊時間軸",
+      "subtitle": "過去 {days} 天的每日點擊數"
+    },
+    "referrers": {
+      "title": "熱門來源",
+      "subtitle": "過去 {days} 天的流量來源",
+      "noData": "沒有來源資料",
+      "headers": {
+        "referrer": "來源",
+        "clicks": "點擊數"
+      },
+      "direct": "直接訪問"
+    },
+    "devices": {
+      "title": "裝置分布",
+      "subtitle": "訪問您連結的裝置類型",
+      "noData": "沒有裝置資料"
+    },
+    "countries": {
+      "title": "國家分布",
+      "subtitle": "點擊的地理分布",
+      "noData": "沒有國家資料",
+      "headers": {
+        "country": "國家",
+        "clicks": "點擊數"
+      },
+      "unknown": "未知"
+    }
+  },
+  "notFound": {
+    "title": "404",
+    "subtitle": "找不到短連結",
+    "description": "您尋找的短連結不存在或可能已被移除。",
+    "goHome": "返回首頁"
+  }
+}
