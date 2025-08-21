@@ -37,8 +37,11 @@ export async function GET(request: NextRequest) {
           }
         }
       } else {
-        orderBy = {
-          [sortableFields[sortBy as keyof typeof sortableFields]]: order as 'asc' | 'desc'
+        const field = sortableFields[sortBy as keyof typeof sortableFields]
+        if (field) {
+          orderBy = {
+            [field]: order as 'asc' | 'desc'
+          }
         }
       }
     }

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ArrowLeft, Download, ExternalLink } from 'lucide-react'
+import { toast } from 'sonner'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
 interface Link {
@@ -97,9 +98,13 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
         a.click()
         window.URL.revokeObjectURL(url)
         document.body.removeChild(a)
+        toast.success('CSV 檔案已下載')
+      } else {
+        toast.error('下載失敗')
       }
     } catch (error) {
       console.error('Export failed:', error)
+      toast.error('下載時發生錯誤')
     }
   }
 

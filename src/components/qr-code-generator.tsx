@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { Download, Upload } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface QRCodeGeneratorProps {
   url: string
@@ -39,10 +40,17 @@ export function QRCodeGenerator({ url, defaultStyle = 'square' }: QRCodeGenerato
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
+      // 檢查檔案大小（限制 2MB）
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('檔案大小不得超過 2MB')
+        return
+      }
+
       setLogoFile(file)
       const reader = new FileReader()
       reader.onload = (e) => {
         setLogoUrl(e.target?.result as string)
+        toast.success('Logo 已上傳')
       }
       reader.readAsDataURL(file)
     }
@@ -50,15 +58,24 @@ export function QRCodeGenerator({ url, defaultStyle = 'square' }: QRCodeGenerato
 
   const downloadQR = (format: 'png' | 'svg' = 'png') => {
     const canvas = canvasRef.current
-    if (!canvas) return
-
-    if (format === 'png') {
-      const link = document.createElement('a')
-      link.download = `qrcode-${Date.now()}.png`
-      link.href = canvas.toDataURL()
-      link.click()
+    if (!canvas) {
+      toast.error('QR Code 尚未生成')
+      return
     }
-    // SVG download would require additional implementation
+
+    try {
+      if (format === 'png') {
+        const link = document.createElement('a')
+        link.download = `qrcode-${Date.now()}.png`
+        link.href = canvas.toDataURL()
+        link.click()
+        toast.success('QR Code 已下載')
+      }
+      // SVG download would require additional implementation
+    } catch (error) {
+      console.error('Download failed:', error)
+      toast.error('下載失敗')
+    }
   }
 
   // QR Code styles configuration

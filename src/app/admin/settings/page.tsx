@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ArrowLeft, Save, Upload, Trash2, Home } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface Settings {
   id?: string
@@ -62,6 +63,12 @@ export default function SettingsPage() {
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
+      // 檢查檔案大小（限制 2MB）
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('檔案大小不得超過 2MB')
+        return
+      }
+
       setLogoFile(file)
       
       // 預覽圖片
@@ -71,6 +78,7 @@ export default function SettingsPage() {
           ...prev,
           logoUrl: e.target?.result as string
         }))
+        toast.success('Logo 已上傳')
       }
       reader.readAsDataURL(file)
     }
@@ -106,15 +114,19 @@ export default function SettingsPage() {
       })
 
       if (response.ok) {
-        setMessage('設定已儲存！')
-        setTimeout(() => setMessage(''), 3000)
+        toast.success('設定已儲存！')
+        setMessage('')
       } else {
         const data = await response.json()
-        setMessage(data.error || '儲存失敗')
+        const errorMsg = data.error || '儲存失敗'
+        setMessage(errorMsg)
+        toast.error(errorMsg)
       }
     } catch (error) {
       console.error('Save settings error:', error)
-      setMessage('網路錯誤，請重試')
+      const errorMsg = '網路錯誤，請重試'
+      setMessage(errorMsg)
+      toast.error(errorMsg)
     } finally {
       setSaving(false)
     }
@@ -123,6 +135,7 @@ export default function SettingsPage() {
   const handleRemoveLogo = () => {
     setSettings(prev => ({ ...prev, logoUrl: undefined }))
     setLogoFile(null)
+    toast.success('Logo 已移除')
   }
 
   if (isLoading) {

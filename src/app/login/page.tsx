@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
+import { toast } from 'sonner'
 
 export default function LoginPage() {
   const [password, setPassword] = useState('')
@@ -52,15 +53,20 @@ export default function LoginPage() {
 
       if (response.ok) {
         console.log('Login successful, redirecting to /admin')
+        toast.success('登入成功')
         // Add a small delay to ensure cookie is set
         setTimeout(() => {
           window.location.href = '/admin'
         }, 100)
       } else {
-        setError(data.error === 'Invalid password' ? '密碼錯誤' : '網路錯誤，請重試')
+        const errorMsg = data.error === 'Invalid password' ? '密碼錯誤' : '網路錯誤，請重試'
+        setError(errorMsg)
+        toast.error(errorMsg)
       }
     } catch {
-      setError('網路錯誤，請重試')
+      const errorMsg = '網路錯誤，請重試'
+      setError(errorMsg)
+      toast.error(errorMsg)
     } finally {
       setIsLoading(false)
     }
