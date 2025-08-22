@@ -138,8 +138,17 @@ export function QRCodeGenerator({ url, defaultStyle = 'square', defaultColorSche
 
     try {
       const canvas = document.createElement('canvas')
-      await qrCode.current.getRawData('png').then(blob => {
-        if (blob) {
+      await qrCode.current.getRawData('png').then(data => {
+        if (data) {
+          // Convert Buffer to Blob if needed
+          let blob: Blob
+          if (data instanceof Blob) {
+            blob = data
+          } else {
+            // Handle Buffer case
+            const uint8Array = new Uint8Array(data)
+            blob = new Blob([uint8Array], { type: 'image/png' })
+          }
           const item = new ClipboardItem({ 'image/png': blob })
           navigator.clipboard.write([item]).then(() => {
             toast.success('QR Code 已複製到剪貼簿')
