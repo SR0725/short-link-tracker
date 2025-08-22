@@ -34,12 +34,13 @@ export async function GET(
     }
 
     // Generate CSV data
-    const csvHeaders = ['Timestamp', 'Referrer', 'Device', 'Country', 'User Agent']
+    const csvHeaders = ['Timestamp', 'Referrer', 'Device', 'Country', 'City', 'User Agent']
     const csvRows = link.clicks.map(click => [
       click.timestamp.toISOString(),
       click.referrer || 'Direct',
       click.device || 'Unknown',
       click.country || 'Unknown',
+      click.city || 'Unknown',
       click.userAgent.replace(/"/g, '""') // Escape quotes
     ])
 

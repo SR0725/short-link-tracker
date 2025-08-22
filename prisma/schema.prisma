@@ -31,6 +31,7 @@ model Click {
   referrer  String?
   userAgent String   @map("user_agent")
   country   String?
+  city      String?
   device    String?
   
   link Link @relation(fields: [linkId], references: [id], onDelete: Cascade)

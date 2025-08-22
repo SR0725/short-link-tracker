@@ -9,7 +9,7 @@ A complete short URL service built with Next.js 15, featuring URL shortening, cl
 - **Advanced Link Management**: Add titles, tags, expiration dates, and click limits
 - **Table Sorting**: Sort links by various criteria (date, clicks, tags, etc.)
 - **Click Tracking**: Track clicks with detailed analytics
-- **Analytics Dashboard**: View click trends, referrers, device types, and geographic data
+- **Analytics Dashboard**: View click trends, referrers, device types, and geographic data (country detection optional)
 - **QR Code Generation**: Generate customizable QR codes with logo support
 - **CSV Export**: Export analytics data for external analysis
 - **Personalized 404 Pages**: Customize 404 page content and branding
@@ -27,6 +27,7 @@ A complete short URL service built with Next.js 15, featuring URL shortening, cl
 - **QR Codes**: qrcode.react with custom styling support
 - **Authentication**: JWT with secure HTTP-only cookies
 - **File Upload**: Image handling for logo customization
+- **GeoIP**: MaxMind GeoLite2 for accurate country detection
 
 ## Setup
 
@@ -58,13 +59,38 @@ A complete short URL service built with Next.js 15, featuring URL shortening, cl
    - `REDIS_URL`: Redis connection string
    - `ADMIN_PASSWORD`: Admin panel password
    - `JWT_SECRET`: JWT signing secret
+   - `MAXMIND_LICENSE_KEY`: MaxMind GeoLite2 license key (**optional**, enables country detection in analytics)
 
-4. **Start Development Server**
+4. **GeoIP Data Configuration (Optional)**
+   **This is completely optional** - the application works perfectly without country detection.
+   
+   To enable country detection in analytics:
+   
+   a. **Get MaxMind License Key (Free)**
+   - Create a free account at https://www.maxmind.com/en/geolite2/signup
+   - Generate a license key from your account dashboard
+   - Add the key to your `.env` file as `MAXMIND_LICENSE_KEY`
+   
+   b. **Update GeoIP Database**
+   ```bash
+   # Update with your license key
+   cd node_modules/geoip-lite && npm run-script updatedb license_key=YOUR_LICENSE_KEY
+   
+   # Or use the convenience script with environment variable
+   pnpm update-geoip
+   ```
+   
+   **✅ Without GeoIP setup:**
+   - Application runs normally with all features
+   - Country field shows as "Unknown" in analytics
+   - Console shows helpful setup instructions on first IP lookup
+
+5. **Start Development Server**
    ```bash
    pnpm dev
    ```
 
-5. **Build for Production**
+6. **Build for Production**
    ```bash
    pnpm build
    pnpm start
@@ -95,6 +121,7 @@ A complete short URL service built with Next.js 15, featuring URL shortening, cl
    - Click "Analytics" button for any short URL
    - View click trends over 7 or 30 days
    - See top referrers, device distribution, and geographic data
+   - Country data available if GeoIP is configured (shows "Unknown" otherwise)
    - Export data as CSV for external analysis
 
 6. **Customize Settings**
@@ -147,8 +174,8 @@ A complete short URL service built with Next.js 15, featuring URL shortening, cl
 - `timestamp`: Click timestamp
 - `referrer`: HTTP referrer header
 - `user_agent`: Browser user agent
-- `device`: Device type (desktop/mobile)
-- `country`: Country code (if available)
+- `device`: Device type (desktop/mobile/tablet/etc.)
+- `country`: ISO 3166-1 country code (if GeoIP is configured)
 
 ### Settings Table
 - `id`: Unique identifier

@@ -110,6 +110,18 @@ export async function GET(
       .slice(0, 10)
       .map(([country, count]) => ({ country, count }))
 
+    // Get city distribution
+    const cityCounts: { [key: string]: number } = {}
+    clicks.forEach(click => {
+      const city = click.city || 'Unknown'
+      cityCounts[city] = (cityCounts[city] || 0) + 1
+    })
+
+    const cityStats = Object.entries(cityCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 10)
+      .map(([city, count]) => ({ city, count }))
+
     return NextResponse.json({
       link: {
         id: link.id,
@@ -124,6 +136,7 @@ export async function GET(
         topReferrers,
         deviceStats,
         countryStats,
+        cityStats,
         totalClicksInPeriod: clicks.length
       }
     })

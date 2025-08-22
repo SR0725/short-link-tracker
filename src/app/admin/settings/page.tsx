@@ -147,27 +147,28 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
           <Button
             variant="outline"
             size="sm"
             onClick={() => router.push('/admin')}
+            className="w-full sm:w-auto"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             返回儀表板
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">個人化設定</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold">個人化設定</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">
               自訂您的短網址服務外觀和行為
             </p>
           </div>
         </div>
 
-        <div className="grid gap-8">
+        <div className="grid gap-6 sm:gap-8">
           {/* Logo 設定 */}
           <Card>
             <CardHeader>
@@ -179,9 +180,9 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label>Logo 圖片</Label>
-                <div className="flex gap-4 items-center">
+                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                   {settings.logoUrl && (
-                    <div className="relative">
+                    <div className="relative mx-auto sm:mx-0">
                       <img 
                         src={settings.logoUrl} 
                         alt="Logo" 
@@ -197,7 +198,7 @@ export default function SettingsPage() {
                       </Button>
                     </div>
                   )}
-                  <div className="flex-1">
+                  <div className="flex-1 w-full">
                     <Input
                       type="file"
                       accept="image/*"
@@ -250,7 +251,7 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="404-title">標題</Label>
                   <Input
@@ -303,10 +304,10 @@ export default function SettingsPage() {
                       className="w-12 h-12 object-contain mx-auto"
                     />
                   )}
-                  <div className="text-4xl font-bold text-gray-300">
+                  <div className="text-2xl sm:text-4xl font-bold text-gray-300">
                     {settings.custom404Title}
                   </div>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-sm sm:text-base px-2">
                     {settings.custom404Description}
                   </p>
                   <Button size="sm" disabled>
@@ -319,8 +320,8 @@ export default function SettingsPage() {
           </Card>
 
           {/* 儲存按鈕 */}
-          <div className="flex justify-end">
-            <Button onClick={handleSave} disabled={isSaving} size="lg">
+          <div className="flex justify-center sm:justify-end">
+            <Button onClick={handleSave} disabled={isSaving} size="lg" className="w-full sm:w-auto">
               <Save className="w-4 h-4 mr-2" />
               {isSaving ? '儲存中...' : '儲存設定'}
             </Button>
@@ -328,7 +329,7 @@ export default function SettingsPage() {
 
           {/* 訊息顯示 */}
           {message && (
-            <div className={`text-center p-3 rounded-lg ${
+            <div className={`text-center p-3 rounded-lg text-sm sm:text-base ${
               message.includes('成功') || message.includes('儲存') 
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
                 : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'

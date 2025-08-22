@@ -298,28 +298,29 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">短網址管理系統</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold">短網址管理系統</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">
               建立和管理您的短網址
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto">
             <Button
               onClick={() => router.push("/admin/settings")}
               variant="outline"
               size="sm"
+              className="flex-1 sm:flex-none"
             >
               <Settings className="w-4 h-4 mr-2" />
-              設定
+              <span className="hidden sm:inline">設定</span>
             </Button>
-            <Button onClick={handleLogout} variant="outline" size="sm">
+            <Button onClick={handleLogout} variant="outline" size="sm" className="flex-1 sm:flex-none">
               <LogOut className="w-4 h-4 mr-2" />
-              登出
+              <span className="hidden sm:inline">登出</span>
             </Button>
           </div>
         </div>
@@ -336,7 +337,7 @@ export default function AdminPage() {
           <CardContent>
             <form onSubmit={handleCreateLink} className="space-y-4">
               {/* Basic Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="target-url">目標網址 *</Label>
                   <Input
@@ -388,7 +389,7 @@ export default function AdminPage() {
                     : "max-h-0 opacity-0"
                 }`}
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
                   <div className="space-y-2">
                     <Label htmlFor="title">標題/名稱（選用）</Label>
                     <Input
@@ -465,7 +466,7 @@ export default function AdminPage() {
           </CardHeader>
           <CardContent>
             {/* Search and Column Visibility Controls */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <div className="flex flex-col lg:flex-row gap-4 mb-6">
               {/* Search Input */}
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -473,7 +474,7 @@ export default function AdminPage() {
                   placeholder="搜尋標題、標籤、目標網址或短碼..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 w-full"
                 />
               </div>
 
@@ -496,7 +497,7 @@ export default function AdminPage() {
 
                 {/* Column Options Dropdown */}
                 {showColumnOptions && (
-                  <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-gray-800 border rounded-md shadow-lg z-10">
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-gray-800 border rounded-md shadow-lg z-10 max-h-80 overflow-y-auto">
                     <div className="p-3 space-y-3">
                       <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
                         顯示欄位
@@ -602,8 +603,10 @@ export default function AdminPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="overflow-x-auto">
-                  <Table>
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <div className="min-w-full inline-block align-middle">
+                    <div className="overflow-hidden">
+                      <Table className="min-w-full">
                     <TableHeader>
                       <TableRow>
                         {columnVisibility.title && (
@@ -677,20 +680,20 @@ export default function AdminPage() {
                         <TableRow key={link.id}>
                           {columnVisibility.title && (
                             <TableCell>
-                              <div className="max-w-xs">
-                                <div className="font-medium truncate flex items-center gap-2">
-                                  {link.title || link.slug}
+                              <div className="max-w-xs sm:max-w-sm">
+                                <div className="font-medium truncate flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                  <span className="truncate">{link.title || link.slug}</span>
                                   {link.tag && (
                                     <Badge
                                       variant={getTagVariant(link.tag)}
-                                      className="text-xs"
+                                      className="text-xs w-fit"
                                     >
                                       {link.tag}
                                     </Badge>
                                   )}
                                 </div>
                                 {link.title && (
-                                  <div className="text-sm text-gray-500 truncate">
+                                  <div className="text-sm text-gray-500 truncate mt-1">
                                     {link.slug}
                                   </div>
                                 )}
@@ -699,8 +702,8 @@ export default function AdminPage() {
                           )}
                           {columnVisibility.shortUrl && (
                             <TableCell>
-                              <div className="flex items-center space-x-2">
-                                <code className="text-sm bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                                <code className="text-xs sm:text-sm bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded truncate max-w-[150px] sm:max-w-none">
                                   {baseUrl}/{link.slug}
                                 </code>
                                 <Button
@@ -709,8 +712,9 @@ export default function AdminPage() {
                                   onClick={() =>
                                     copyToClipboard(`${baseUrl}/${link.slug}`)
                                   }
+                                  className="p-1 sm:p-2"
                                 >
-                                  <Copy className="w-4 h-4" />
+                                  <Copy className="w-3 h-3 sm:w-4 sm:h-4" />
                                 </Button>
                               </div>
                             </TableCell>
@@ -718,7 +722,7 @@ export default function AdminPage() {
                           {columnVisibility.targetUrl && (
                             <TableCell>
                               <div
-                                className="max-w-xs truncate"
+                                className="max-w-xs sm:max-w-sm truncate text-sm"
                                 title={link.targetUrl}
                               >
                                 {link.targetUrl}
@@ -798,7 +802,7 @@ export default function AdminPage() {
                           )}
                           {columnVisibility.actions && (
                             <TableCell>
-                              <div className="flex space-x-1">
+                              <div className="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-1">
                                 <Button
                                   size="sm"
                                   variant="outline"
@@ -807,8 +811,10 @@ export default function AdminPage() {
                                       showQrCode === link.id ? null : link.id
                                     )
                                   }
+                                  className="w-full sm:w-auto"
                                 >
                                   <QrCode className="w-4 h-4" />
+                                  <span className="sm:hidden ml-2">QR</span>
                                 </Button>
                                 <Button
                                   size="sm"
@@ -816,16 +822,19 @@ export default function AdminPage() {
                                   onClick={() =>
                                     router.push(`/admin/analytics/${link.id}`)
                                   }
+                                  className="w-full sm:w-auto"
                                 >
                                   <BarChart className="w-4 h-4" />
+                                  <span className="sm:hidden ml-2">分析</span>
                                 </Button>
-                                <Button size="sm" variant="outline" asChild>
+                                <Button size="sm" variant="outline" asChild className="w-full sm:w-auto">
                                   <a
                                     href={`${baseUrl}/${link.slug}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                   >
                                     <ExternalLink className="w-4 h-4" />
+                                    <span className="sm:hidden ml-2">訪問</span>
                                   </a>
                                 </Button>
                               </div>
@@ -834,7 +843,9 @@ export default function AdminPage() {
                         </TableRow>
                       ))}
                     </TableBody>
-                  </Table>
+                      </Table>
+                    </div>
+                  </div>
                 </div>
 
                 {/* QR Code Display */}
@@ -851,11 +862,13 @@ export default function AdminPage() {
                           ✕
                         </Button>
                       </div>
-                      <QRCodeGenerator
-                        url={`${baseUrl}/${
-                          filteredLinks.find((l) => l.id === showQrCode)?.slug
-                        }`}
-                      />
+                      <div className="flex justify-center">
+                        <QRCodeGenerator
+                          url={`${baseUrl}/${
+                            filteredLinks.find((l) => l.id === showQrCode)?.slug
+                          }`}
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
