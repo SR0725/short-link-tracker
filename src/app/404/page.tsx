@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { motion } from 'framer-motion'
 import { Home } from 'lucide-react'
 
 interface Settings {
@@ -46,46 +46,117 @@ export default function NotFoundPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div>載入中...</div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-8 h-8 border-2 border-black border-t-transparent rounded-full"
+        />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <Card className="w-full max-w-md text-center">
-        <CardHeader>
-          <div className="space-y-4">
-            {settings.logoUrl && (
-              <div className="flex justify-center">
-                <img 
-                  src={settings.logoUrl} 
-                  alt="Logo" 
-                  className="w-16 h-16 object-contain"
-                />
-              </div>
+    <div className="min-h-screen bg-white">
+      <motion.section className="min-h-screen flex items-center justify-center relative overflow-hidden">
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100"
+          animate={{
+            backgroundPosition: ["0% 0%", "100% 100%"],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        />
+        
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-4xl mx-auto text-center px-8 relative z-10"
+        >
+          <motion.div 
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="mb-8"
+          >
+            {settings.logoUrl ? (
+              <motion.img 
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.1, duration: 0.6 }}
+                src={settings.logoUrl} 
+                alt="Logo" 
+                className="w-20 h-20 object-contain mx-auto mb-6"
+              />
+            ) : (
+              <motion.div 
+                className="inline-flex items-center justify-center w-20 h-20 bg-black rounded-2xl mb-6"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
+                <Home className="w-10 h-10 text-white" />
+              </motion.div>
             )}
-            <CardTitle className="text-6xl font-bold text-gray-300 dark:text-gray-600">
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="text-6xl md:text-8xl font-black text-black mb-4 tracking-tight"
+            >
               {settings.custom404Title}
-            </CardTitle>
-            <CardDescription className="text-lg">
+            </motion.h1>
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="text-3xl md:text-4xl font-bold text-gray-600 mb-6"
+            >
               找不到短連結
-            </CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-gray-600 dark:text-gray-400">
+            </motion.h2>
+          </motion.div>
+
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className="text-xl md:text-2xl text-gray-700 mb-12 max-w-2xl mx-auto leading-relaxed"
+          >
             {settings.custom404Description}
-          </p>
-          <Button asChild>
-            <Link href={settings.custom404ButtonUrl}>
-              <Home className="w-4 h-4 mr-2" />
-              {settings.custom404ButtonText}
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
+            <Button 
+              asChild 
+              size="lg" 
+              className="text-lg px-12 py-6 bg-black hover:bg-gray-800 text-white rounded-full shadow-2xl hover:shadow-black/25 transition-all duration-300"
+            >
+              <Link href={settings.custom404ButtonUrl}>
+                <Home className="w-6 h-6 mr-3" />
+                {settings.custom404ButtonText}
+              </Link>
+            </Button>
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-gray-400 rounded-full mt-2"></div>
+          </div>
+        </motion.div>
+      </motion.section>
     </div>
   )
 }

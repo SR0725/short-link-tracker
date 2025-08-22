@@ -168,31 +168,49 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-        <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-2 border-gray-800 dark:border-gray-400 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <div className="text-gray-800 dark:text-gray-400">載入分析資料中...</div>
-        </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <motion.div
+            className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mb-4 mx-auto"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          >
+            <TrendingUp className="w-8 h-8 text-white" />
+          </motion.div>
+          <p className="text-xl font-medium text-black">載入分析資料中...</p>
+        </motion.div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-        <div className="text-center p-8 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-300 dark:border-gray-700">
-          <div className="text-gray-800 dark:text-gray-300 text-lg font-medium">{error}</div>
-        </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center p-8 bg-white rounded-2xl shadow-xl border-2 border-gray-200"
+        >
+          <div className="text-black text-xl font-semibold">{error}</div>
+        </motion.div>
       </div>
     )
   }
 
   if (!data) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-        <div className="text-center p-8 bg-white dark:bg-gray-900 rounded-xl shadow-lg">
-          <div className="text-gray-800 dark:text-gray-400">找不到分析數據</div>
-        </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center p-8 bg-white rounded-2xl shadow-xl border-2 border-gray-200"
+        >
+          <div className="text-black text-xl font-semibold">找不到分析數據</div>
+        </motion.div>
       </div>
     )
   }
@@ -210,66 +228,68 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
   const topDevice = data.analytics.deviceStats[0]?.device || 'N/A'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <div className="max-w-7xl mx-auto p-3 sm:p-6 space-y-6 sm:space-y-8">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-8 py-12 space-y-12">
         {/* Enhanced Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/60 dark:border-gray-700/60 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl"
+          className="bg-white border-2 border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
         >
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 w-full lg:w-auto">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="flex items-center space-x-6">
               <Button
                 variant="outline"
-                size="sm"
+                size="lg"
                 onClick={() => router.push('/admin')}
-                className="border-gray-800 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200 w-full sm:w-auto"
+                className="border-gray-300 hover:bg-gray-50 hover:border-gray-400"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeft className="w-5 h-5 mr-2" />
                 返回儀表板
               </Button>
-              <div className="w-full">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100">
-                  分析詳情
-                </h1>
-                <div className="mt-3 space-y-1">
-                  <p className="text-gray-700 dark:text-gray-300 font-medium text-sm sm:text-base break-all">
-                    {baseUrl}/{data.link.slug}
-                  </p>
-                  <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm flex items-start sm:items-center">
-                    <ExternalLink className="w-3 h-3 mr-1 mt-0.5 sm:mt-0 flex-shrink-0" />
-                    <span className="break-all">{data.link.targetUrl}</span>
-                  </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-4xl lg:text-5xl font-black text-black tracking-tight">
+                    分析中心
+                  </h1>
+                  <div className="mt-2 space-y-1">
+                    <p className="text-lg text-gray-700 font-medium break-all">
+                      {baseUrl}/{data.link.slug}
+                    </p>
+                    <p className="text-base text-gray-600 flex items-center">
+                      <ExternalLink className="w-4 h-4 mr-2 flex-shrink-0" />
+                      <span className="break-all">{data.link.targetUrl}</span>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full lg:w-auto">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 variant="outline"
-                size="sm"
+                size="lg"
                 asChild
-                className="bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 w-full sm:w-auto"
+                className="border-gray-300 hover:bg-gray-50 hover:border-gray-400"
               >
                 <a
                   href={`${baseUrl}/${data.link.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">訪問連結</span>
-                  <span className="sm:hidden">訪問</span>
+                  <ExternalLink className="w-5 h-5 mr-2" />
+                  訪問連結
                 </a>
               </Button>
               <Button 
                 onClick={handleExport} 
-                variant="outline" 
-                size="sm"
-                className="bg-gray-900 dark:bg-gray-700 border-gray-900 dark:border-gray-600 hover:bg-gray-800 dark:hover:bg-gray-600 text-white w-full sm:w-auto"
+                size="lg"
+                className="bg-black hover:bg-gray-800 text-white"
               >
-                <Download className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">匯出 CSV</span>
-                <span className="sm:hidden">匯出</span>
+                <Download className="w-5 h-5 mr-2" />
+                匯出 CSV
               </Button>
             </div>
           </div>
@@ -280,58 +300,66 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          <Card className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-3">
+          <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">總點擊數</CardTitle>
-                <Eye className="w-5 h-5 text-gray-800 dark:text-gray-400" />
+                <CardTitle className="text-base font-semibold text-gray-700">總點擊數</CardTitle>
+                <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center">
+                  <Eye className="w-5 h-5 text-white" />
+                </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{formatNumber(data.link.totalClicks)}</div>
+              <div className="text-3xl font-black text-black">{formatNumber(data.link.totalClicks)}</div>
             </CardContent>
           </Card>
           
-          <Card className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-3">
+          <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">期間點擊 ({data.analytics.period})</CardTitle>
-                <TrendingUp className="w-5 h-5 text-gray-800 dark:text-gray-400" />
+                <CardTitle className="text-base font-semibold text-gray-700">期間點擊 ({data.analytics.period})</CardTitle>
+                <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-white" />
+                </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{formatNumber(data.analytics.totalClicksInPeriod)}</div>
-              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">平均每日: {averageClicksPerDay}</div>
+              <div className="text-3xl font-black text-black">{formatNumber(data.analytics.totalClicksInPeriod)}</div>
+              <div className="text-sm text-gray-600 mt-2">平均每日: {averageClicksPerDay}</div>
             </CardContent>
           </Card>
           
-          <Card className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-3">
+          <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">覆蓋國家</CardTitle>
-                <Globe className="w-5 h-5 text-gray-800 dark:text-gray-400" />
+                <CardTitle className="text-base font-semibold text-gray-700">覆蓋國家</CardTitle>
+                <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center">
+                  <Globe className="w-5 h-5 text-white" />
+                </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{totalUniqueCountries}</div>
-              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">主要來源: {topCountry}</div>
+              <div className="text-3xl font-black text-black">{totalUniqueCountries}</div>
+              <div className="text-sm text-gray-600 mt-2">主要來源: {topCountry}</div>
             </CardContent>
           </Card>
           
-          <Card className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-3">
+          <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">建立時間</CardTitle>
-                <Calendar className="w-5 h-5 text-gray-800 dark:text-gray-400" />
+                <CardTitle className="text-base font-semibold text-gray-700">建立時間</CardTitle>
+                <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-white" />
+                </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <div className="text-2xl font-black text-black">
                 {new Date(data.link.createdAt).toLocaleDateString('zh-TW')}
               </div>
-              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">主要裝置: {topDevice}</div>
+              <div className="text-sm text-gray-600 mt-2">主要裝置: {topDevice}</div>
             </CardContent>
           </Card>
         </motion.div>
@@ -341,23 +369,23 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/60 dark:border-gray-700/60 rounded-2xl p-6 shadow-lg"
+          className="bg-white border-2 border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
         >
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">時間範圍</h3>
-              <p className="text-sm text-gray-700 dark:text-gray-400">選擇要查看的分析時段</p>
+              <h3 className="text-2xl font-bold text-black">時間範圍</h3>
+              <p className="text-base text-gray-600 mt-1">選擇要查看的分析時段</p>
             </div>
-            <div className="flex flex-wrap gap-2 w-full lg:w-auto">
+            <div className="flex flex-wrap gap-3">
               {[7, 30, 90].map((days) => (
                 <Button
                   key={days}
                   variant={period === days ? 'default' : 'outline'}
-                  size="sm"
+                  size="lg"
                   onClick={() => setPeriod(days)}
-                  className={`flex-1 sm:flex-none ${period === days ? 
-                    'bg-gray-900 text-white border-0 shadow-md hover:bg-gray-800' : 
-                    'border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200'
+                  className={`${period === days ? 
+                    'bg-black text-white hover:bg-gray-800' : 
+                    'border-gray-300 hover:bg-gray-50 hover:border-gray-400 text-gray-700'
                   }`}
                 >
                   {days} 天
@@ -372,14 +400,16 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
-          className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/60 dark:border-gray-700/60 rounded-2xl shadow-xl overflow-hidden relative"
+          className="bg-white border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
         >
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center">
-              <Globe className="w-5 h-5 mr-2 text-gray-800 dark:text-gray-400" />
+          <div className="p-8 border-b-2 border-gray-200">
+            <h3 className="text-2xl font-bold text-black flex items-center">
+              <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center mr-3">
+                <Globe className="w-5 h-5 text-white" />
+              </div>
               全球點擊分佈
             </h3>
-            <p className="text-sm text-gray-700 dark:text-gray-400 mt-1">
+            <p className="text-base text-gray-600 mt-2">
               顏色越深表示該地區的點擊量越高，滑鼠移到國家上查看詳細資訊
             </p>
           </div>
@@ -536,14 +566,16 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/60 dark:border-slate-700/60 rounded-2xl shadow-xl overflow-hidden"
+          className="bg-white border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
         >
-          <div className="p-6 border-b border-slate-200 dark:border-slate-700">
-            <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 flex items-center">
-              <TrendingUp className="w-5 h-5 mr-2 text-indigo-500" />
+          <div className="p-8 border-b-2 border-gray-200">
+            <h3 className="text-2xl font-bold text-black flex items-center">
+              <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center mr-3">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
               點擊趨勢
             </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            <p className="text-base text-gray-600 mt-2">
               過去 {period} 天的每日點擊分析
             </p>
           </div>

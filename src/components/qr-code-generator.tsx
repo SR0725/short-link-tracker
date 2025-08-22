@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import { Download, Upload, Palette, Shapes } from 'lucide-react'
+import { Download, Upload, Palette, Shapes, Copy } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface QRCodeGeneratorProps {
@@ -127,6 +127,30 @@ export function QRCodeGenerator({ url, defaultStyle = 'square', defaultColorSche
     } catch (error) {
       console.error('Download failed:', error)
       toast.error('下載失敗')
+    }
+  }
+
+  const copyQR = async () => {
+    if (!qrCode.current) {
+      toast.error('QR Code 尚未生成')
+      return
+    }
+
+    try {
+      const canvas = document.createElement('canvas')
+      await qrCode.current.getRawData('png').then(blob => {
+        if (blob) {
+          const item = new ClipboardItem({ 'image/png': blob })
+          navigator.clipboard.write([item]).then(() => {
+            toast.success('QR Code 已複製到剪貼簿')
+          }).catch(() => {
+            toast.error('複製失敗，請嘗試下載')
+          })
+        }
+      })
+    } catch (error) {
+      console.error('Copy failed:', error)
+      toast.error('複製失敗，請嘗試下載')
     }
   }
 
@@ -355,8 +379,12 @@ export function QRCodeGenerator({ url, defaultStyle = 'square', defaultColorSche
           )}
         </div>
 
-        {/* 下載按鈕 */}
+        {/* 下載和複製按鈕 */}
         <div className="flex gap-2">
+          <Button onClick={copyQR} variant="outline" className="flex-1">
+            <Copy className="w-4 h-4 mr-2" />
+            複製圖片
+          </Button>
           <Button onClick={() => downloadQR('png')} className="flex-1">
             <Download className="w-4 h-4 mr-2" />
             下載 PNG
