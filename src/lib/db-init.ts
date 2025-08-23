@@ -54,15 +54,6 @@ export async function initializeDatabase() {
         }
         console.log('✅ Database schema synchronized');
       }
-      
-      // 生成 Prisma client
-      console.log('🔄 Generating Prisma client...');
-      const generateResult = await execAsync('npx prisma generate');
-      console.log('📋 Generate output:', generateResult.stdout);
-      if (generateResult.stderr) {
-        console.warn('⚠️ Generate warnings:', generateResult.stderr);
-      }
-      console.log('✅ Prisma client generated');
     } else {
       console.log('✅ Database already initialized');
     }
