@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { existsSync } from 'fs';
+import path from 'path';
 
 const execAsync = promisify(exec);
 let isInitialized = false;
@@ -27,15 +29,31 @@ export async function initializeDatabase() {
     
     // @ts-expect-error - tablesExist is a raw query result
     if (!tablesExist[0]?.exists) {
-      console.log('🔄 Running database migrations...');
+      console.log('🔄 Initializing database...');
       
-      // 執行 Prisma 遷移
-      const migrateResult = await execAsync('npx prisma migrate deploy');
-      console.log('📋 Migration output:', migrateResult.stdout);
-      if (migrateResult.stderr) {
-        console.warn('⚠️ Migration warnings:', migrateResult.stderr);
+      // 檢查是否有 migrations 資料夾
+      const migrationsPath = path.join(process.cwd(), 'prisma', 'migrations');
+      const hasMigrations = existsSync(migrationsPath);
+      
+      if (hasMigrations) {
+        console.log('📁 Found migrations folder, running migrations...');
+        // 執行 Prisma 遷移
+        const migrateResult = await execAsync('npx prisma migrate deploy');
+        console.log('📋 Migration output:', migrateResult.stdout);
+        if (migrateResult.stderr) {
+          console.warn('⚠️ Migration warnings:', migrateResult.stderr);
+        }
+        console.log('✅ Database migrations completed');
+      } else {
+        console.log('📄 No migrations found, pushing schema directly...');
+        // 直接推送 schema 到資料庫
+        const pushResult = await execAsync('npx prisma db push');
+        console.log('📋 Schema push output:', pushResult.stdout);
+        if (pushResult.stderr) {
+          console.warn('⚠️ Schema push warnings:', pushResult.stderr);
+        }
+        console.log('✅ Database schema synchronized');
       }
-      console.log('✅ Database migrations completed');
       
       // 生成 Prisma client
       console.log('🔄 Generating Prisma client...');
