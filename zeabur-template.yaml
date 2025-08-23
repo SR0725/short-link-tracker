@@ -194,7 +194,7 @@ spec:
         - name: short-link-tracker
           icon: https://service-icons.zeabur.com/git/nodejs/next.js.svg
           template: PREBUILT_V2
-          depends:
+          dependencies:
             - postgresql
             - redis
           spec:
