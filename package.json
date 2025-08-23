@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "dev:turbo": "next dev --turbopack",
-    "build": "npx prisma migrate deploy && npx prisma generate && npm run update-geoip-conditional && next build",
-    "build:turbo": "npx prisma migrate deploy && npx prisma generate && npm run update-geoip-conditional && next build --turbopack",
+    "build": "npm run update-geoip-conditional && next build",
+    "build:turbo": "npm run update-geoip-conditional && next build --turbopack",
     "start": "next start",
     "lint": "eslint",
     "update-geoip": "cd node_modules/geoip-lite && npm run-script updatedb license_key=$MAXMIND_LICENSE_KEY",

@@ -102,26 +102,6 @@ export default function AdminPage() {
       ? window.location.origin
       : "http://localhost:3000";
 
-  // Helper function to get tag color variants
-  const getTagVariant = (
-    tag: string | undefined
-  ): "default" | "secondary" | "destructive" | "outline" => {
-    if (!tag) return "outline";
-
-    const tagColors: Record<
-      string,
-      "default" | "secondary" | "destructive" | "outline"
-    > = {
-      工作: "default",
-      個人: "secondary",
-      行銷: "destructive",
-      社群媒體: "outline",
-      測試: "secondary",
-    };
-
-    return tagColors[tag] || "outline";
-  };
-
   // Helper function to toggle column visibility
   const toggleColumnVisibility = (column: keyof ColumnVisibility) => {
     setColumnVisibility((prev) => ({
@@ -283,13 +263,15 @@ export default function AdminPage() {
   };
 
   const handleDeleteLink = async (linkId: string, linkTitle?: string) => {
-    if (!confirm(`確定要刪除短網址 "${linkTitle || linkId}" 嗎？此操作無法復原。`)) {
+    if (
+      !confirm(`確定要刪除短網址 "${linkTitle || linkId}" 嗎？此操作無法復原。`)
+    ) {
       return;
     }
 
     try {
       const response = await fetch(`/api/links/${linkId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
@@ -334,14 +316,14 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-8 py-12">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="space-y-12"
         >
           {/* Header */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -362,7 +344,7 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -377,8 +359,8 @@ export default function AdminPage() {
                 <Settings className="w-5 h-5 mr-2" />
                 設定
               </Button>
-              <Button 
-                onClick={handleLogout} 
+              <Button
+                onClick={handleLogout}
                 size="lg"
                 className="bg-black hover:bg-gray-800 text-white transition-colors"
               >
@@ -410,11 +392,14 @@ export default function AdminPage() {
                 <form onSubmit={handleCreateLink} className="space-y-6">
                   {/* Basic Fields */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <motion.div 
+                    <motion.div
                       className="space-y-3"
                       whileFocus={{ scale: 1.02 }}
                     >
-                      <Label htmlFor="target-url" className="text-base font-semibold text-gray-900">
+                      <Label
+                        htmlFor="target-url"
+                        className="text-base font-semibold text-gray-900"
+                      >
                         目標網址 *
                       </Label>
                       <Input
@@ -428,11 +413,14 @@ export default function AdminPage() {
                         className="h-12 text-base border-gray-300 focus:border-black focus:ring-black"
                       />
                     </motion.div>
-                    <motion.div 
+                    <motion.div
                       className="space-y-3"
                       whileFocus={{ scale: 1.02 }}
                     >
-                      <Label htmlFor="custom-slug" className="text-base font-semibold text-gray-900">
+                      <Label
+                        htmlFor="custom-slug"
+                        className="text-base font-semibold text-gray-900"
+                      >
                         自訂短碼（選用）
                       </Label>
                       <Input
@@ -453,7 +441,9 @@ export default function AdminPage() {
                       type="button"
                       variant="outline"
                       size="lg"
-                      onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
+                      onClick={() =>
+                        setShowAdvancedOptions(!showAdvancedOptions)
+                      }
                       disabled={isCreating}
                       className="border-gray-300 hover:bg-gray-50 hover:border-gray-400"
                     >
@@ -478,7 +468,10 @@ export default function AdminPage() {
                       >
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6 border-t border-gray-200">
                           <div className="space-y-3">
-                            <Label htmlFor="title" className="text-base font-semibold text-gray-900">
+                            <Label
+                              htmlFor="title"
+                              className="text-base font-semibold text-gray-900"
+                            >
                               標題/名稱（選用）
                             </Label>
                             <Input
@@ -498,7 +491,10 @@ export default function AdminPage() {
                             placeholder="輸入標籤名稱"
                           />
                           <div className="space-y-3">
-                            <Label htmlFor="expires-at" className="text-base font-semibold text-gray-900">
+                            <Label
+                              htmlFor="expires-at"
+                              className="text-base font-semibold text-gray-900"
+                            >
                               到期日（選用）
                             </Label>
                             <Input
@@ -511,7 +507,10 @@ export default function AdminPage() {
                             />
                           </div>
                           <div className="space-y-3">
-                            <Label htmlFor="click-limit" className="text-base font-semibold text-gray-900">
+                            <Label
+                              htmlFor="click-limit"
+                              className="text-base font-semibold text-gray-900"
+                            >
                               點擊上限（選用）
                             </Label>
                             <Input
@@ -531,7 +530,7 @@ export default function AdminPage() {
                   </AnimatePresence>
 
                   {error && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="text-base text-red-600 font-medium bg-red-50 p-4 rounded-xl border border-red-200"
@@ -544,8 +543,8 @@ export default function AdminPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       disabled={isCreating}
                       size="lg"
                       className="w-full bg-black hover:bg-gray-800 text-white h-14 text-lg font-semibold rounded-xl transition-colors"
@@ -554,7 +553,11 @@ export default function AdminPage() {
                         <div className="flex items-center">
                           <motion.div
                             animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            transition={{
+                              duration: 1,
+                              repeat: Infinity,
+                              ease: "linear",
+                            }}
                             className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
                           />
                           建立中...
@@ -594,7 +597,7 @@ export default function AdminPage() {
                 {/* Search and Column Visibility Controls */}
                 <div className="flex flex-col lg:flex-row gap-4 mb-8">
                   {/* Search Input */}
-                  <motion.div 
+                  <motion.div
                     className="flex-1 relative"
                     whileFocus={{ scale: 1.02 }}
                   >
@@ -647,7 +650,10 @@ export default function AdminPage() {
                                     toggleColumnVisibility("title")
                                   }
                                 />
-                                <Label htmlFor="col-title" className="text-base font-medium">
+                                <Label
+                                  htmlFor="col-title"
+                                  className="text-base font-medium"
+                                >
                                   標題/名稱
                                 </Label>
                               </div>
@@ -659,7 +665,10 @@ export default function AdminPage() {
                                     toggleColumnVisibility("shortUrl")
                                   }
                                 />
-                                <Label htmlFor="col-shortUrl" className="text-base font-medium">
+                                <Label
+                                  htmlFor="col-shortUrl"
+                                  className="text-base font-medium"
+                                >
                                   短網址
                                 </Label>
                               </div>
@@ -671,7 +680,10 @@ export default function AdminPage() {
                                     toggleColumnVisibility("targetUrl")
                                   }
                                 />
-                                <Label htmlFor="col-targetUrl" className="text-base font-medium">
+                                <Label
+                                  htmlFor="col-targetUrl"
+                                  className="text-base font-medium"
+                                >
                                   目標網址
                                 </Label>
                               </div>
@@ -683,7 +695,10 @@ export default function AdminPage() {
                                     toggleColumnVisibility("clickCount")
                                   }
                                 />
-                                <Label htmlFor="col-clickCount" className="text-base font-medium">
+                                <Label
+                                  htmlFor="col-clickCount"
+                                  className="text-base font-medium"
+                                >
                                   點擊數/上限
                                 </Label>
                               </div>
@@ -695,7 +710,10 @@ export default function AdminPage() {
                                     toggleColumnVisibility("expiresAt")
                                   }
                                 />
-                                <Label htmlFor="col-expiresAt" className="text-base font-medium">
+                                <Label
+                                  htmlFor="col-expiresAt"
+                                  className="text-base font-medium"
+                                >
                                   到期日
                                 </Label>
                               </div>
@@ -707,7 +725,10 @@ export default function AdminPage() {
                                     toggleColumnVisibility("lastClickAt")
                                   }
                                 />
-                                <Label htmlFor="col-lastClickAt" className="text-base font-medium">
+                                <Label
+                                  htmlFor="col-lastClickAt"
+                                  className="text-base font-medium"
+                                >
                                   最近點擊
                                 </Label>
                               </div>
@@ -719,7 +740,10 @@ export default function AdminPage() {
                                     toggleColumnVisibility("createdAt")
                                   }
                                 />
-                                <Label htmlFor="col-createdAt" className="text-base font-medium">
+                                <Label
+                                  htmlFor="col-createdAt"
+                                  className="text-base font-medium"
+                                >
                                   建立時間
                                 </Label>
                               </div>
@@ -731,7 +755,7 @@ export default function AdminPage() {
                   </div>
                 </div>
                 {links.length === 0 ? (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="text-center py-16"
@@ -747,7 +771,7 @@ export default function AdminPage() {
                     </p>
                   </motion.div>
                 ) : filteredLinks.length === 0 ? (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="text-center py-16"
@@ -763,7 +787,7 @@ export default function AdminPage() {
                     </p>
                   </motion.div>
                 ) : (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="space-y-6"
@@ -773,286 +797,322 @@ export default function AdminPage() {
                         <Table className="min-w-full">
                           <TableHeader>
                             <TableRow className="border-gray-300 hover:bg-gray-100">
-                        {columnVisibility.title && (
-                          <TableHead
-                            className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                            onClick={() => handleSort("title")}
-                          >
-                            <div className="flex items-center">
-                              標題/名稱
-                              {getSortIcon("title")}
-                            </div>
-                          </TableHead>
-                        )}
-                        {columnVisibility.shortUrl && (
-                          <TableHead>短網址</TableHead>
-                        )}
-                        {columnVisibility.targetUrl && (
-                          <TableHead>目標網址</TableHead>
-                        )}
-                        {columnVisibility.clickCount && (
-                          <TableHead
-                            className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                            onClick={() => handleSort("clickCount")}
-                          >
-                            <div className="flex items-center">
-                              點擊數/上限
-                              {getSortIcon("clickCount")}
-                            </div>
-                          </TableHead>
-                        )}
-                        {columnVisibility.lastClickAt && (
-                          <TableHead
-                            className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                            onClick={() => handleSort("lastClickAt")}
-                          >
-                            <div className="flex items-center">
-                              最近點擊
-                              {getSortIcon("lastClickAt")}
-                            </div>
-                          </TableHead>
-                        )}
-                        {columnVisibility.expiresAt && (
-                          <TableHead
-                            className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                            onClick={() => handleSort("expiresAt")}
-                          >
-                            <div className="flex items-center">
-                              到期日
-                              {getSortIcon("expiresAt")}
-                            </div>
-                          </TableHead>
-                        )}
-                        {columnVisibility.createdAt && (
-                          <TableHead
-                            className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                            onClick={() => handleSort("createdAt")}
-                          >
-                            <div className="flex items-center">
-                              建立時間
-                              {getSortIcon("createdAt")}
-                            </div>
-                          </TableHead>
-                        )}
-                        {columnVisibility.actions && (
-                          <TableHead>操作</TableHead>
-                        )}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredLinks.map((link) => (
-                        <TableRow key={link.id}>
-                          {columnVisibility.title && (
-                            <TableCell>
-                              <div className="max-w-xs sm:max-w-sm">
-                                <div className="font-medium truncate flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                                  <span className="truncate">{link.title || link.slug}</span>
-                                  {link.tag && (
-                                    <Badge
-                                      variant={getTagVariant(link.tag)}
-                                      className="text-xs w-fit"
+                              {columnVisibility.title && (
+                                <TableHead
+                                  className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                                  onClick={() => handleSort("title")}
+                                >
+                                  <div className="flex items-center">
+                                    標題/名稱
+                                    {getSortIcon("title")}
+                                  </div>
+                                </TableHead>
+                              )}
+                              {columnVisibility.shortUrl && (
+                                <TableHead>短網址</TableHead>
+                              )}
+                              {columnVisibility.targetUrl && (
+                                <TableHead>目標網址</TableHead>
+                              )}
+                              {columnVisibility.clickCount && (
+                                <TableHead
+                                  className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                                  onClick={() => handleSort("clickCount")}
+                                >
+                                  <div className="flex items-center">
+                                    點擊數/上限
+                                    {getSortIcon("clickCount")}
+                                  </div>
+                                </TableHead>
+                              )}
+                              {columnVisibility.lastClickAt && (
+                                <TableHead
+                                  className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                                  onClick={() => handleSort("lastClickAt")}
+                                >
+                                  <div className="flex items-center">
+                                    最近點擊
+                                    {getSortIcon("lastClickAt")}
+                                  </div>
+                                </TableHead>
+                              )}
+                              {columnVisibility.expiresAt && (
+                                <TableHead
+                                  className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                                  onClick={() => handleSort("expiresAt")}
+                                >
+                                  <div className="flex items-center">
+                                    到期日
+                                    {getSortIcon("expiresAt")}
+                                  </div>
+                                </TableHead>
+                              )}
+                              {columnVisibility.createdAt && (
+                                <TableHead
+                                  className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                                  onClick={() => handleSort("createdAt")}
+                                >
+                                  <div className="flex items-center">
+                                    建立時間
+                                    {getSortIcon("createdAt")}
+                                  </div>
+                                </TableHead>
+                              )}
+                              {columnVisibility.actions && (
+                                <TableHead>操作</TableHead>
+                              )}
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {filteredLinks.map((link) => (
+                              <TableRow key={link.id}>
+                                {columnVisibility.title && (
+                                  <TableCell>
+                                    <div className="max-w-xs sm:max-w-sm">
+                                      <div className="font-medium truncate flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                        <span className="truncate">
+                                          {link.title || link.slug}
+                                        </span>
+                                        {link.tag && (
+                                          <Badge
+                                            variant={"default"}
+                                            className="text-xs w-fit"
+                                          >
+                                            {link.tag}
+                                          </Badge>
+                                        )}
+                                      </div>
+                                      {link.title && (
+                                        <div className="text-sm text-gray-500 truncate mt-1">
+                                          {link.slug}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </TableCell>
+                                )}
+                                {columnVisibility.shortUrl && (
+                                  <TableCell>
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                                      <code className="text-xs sm:text-sm bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded truncate max-w-[150px] sm:max-w-none">
+                                        {baseUrl}/{link.slug}
+                                      </code>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() =>
+                                          copyToClipboard(
+                                            `${baseUrl}/${link.slug}`
+                                          )
+                                        }
+                                        className="p-1 sm:p-2"
+                                      >
+                                        <Copy className="w-3 h-3 sm:w-4 sm:h-4" />
+                                      </Button>
+                                    </div>
+                                  </TableCell>
+                                )}
+                                {columnVisibility.targetUrl && (
+                                  <TableCell>
+                                    <div
+                                      className="max-w-xs sm:max-w-sm truncate text-sm"
+                                      title={link.targetUrl}
                                     >
-                                      {link.tag}
-                                    </Badge>
-                                  )}
-                                </div>
-                                {link.title && (
-                                  <div className="text-sm text-gray-500 truncate mt-1">
-                                    {link.slug}
-                                  </div>
+                                      {link.targetUrl}
+                                    </div>
+                                  </TableCell>
                                 )}
-                              </div>
-                            </TableCell>
-                          )}
-                          {columnVisibility.shortUrl && (
-                            <TableCell>
-                              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
-                                <code className="text-xs sm:text-sm bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded truncate max-w-[150px] sm:max-w-none">
-                                  {baseUrl}/{link.slug}
-                                </code>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() =>
-                                    copyToClipboard(`${baseUrl}/${link.slug}`)
-                                  }
-                                  className="p-1 sm:p-2"
-                                >
-                                  <Copy className="w-3 h-3 sm:w-4 sm:h-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          )}
-                          {columnVisibility.targetUrl && (
-                            <TableCell>
-                              <div
-                                className="max-w-xs sm:max-w-sm truncate text-sm"
-                                title={link.targetUrl}
-                              >
-                                {link.targetUrl}
-                              </div>
-                            </TableCell>
-                          )}
-                          {columnVisibility.clickCount && (
-                            <TableCell>
-                              <div className="flex items-center space-x-1">
-                                <span className="font-medium">
-                                  {link.clickCount}
-                                </span>
-                                {link.clickLimit && (
-                                  <>
-                                    <span className="text-gray-400">/</span>
-                                    <span className="text-gray-600 dark:text-gray-400">
-                                      {link.clickLimit}
-                                    </span>
-                                  </>
+                                {columnVisibility.clickCount && (
+                                  <TableCell>
+                                    <div className="flex items-center space-x-1">
+                                      <span className="font-medium">
+                                        {link.clickCount}
+                                      </span>
+                                      {link.clickLimit && (
+                                        <>
+                                          <span className="text-gray-400">
+                                            /
+                                          </span>
+                                          <span className="text-gray-600 dark:text-gray-400">
+                                            {link.clickLimit}
+                                          </span>
+                                        </>
+                                      )}
+                                    </div>
+                                  </TableCell>
                                 )}
-                              </div>
-                            </TableCell>
-                          )}
-                          {columnVisibility.lastClickAt && (
-                            <TableCell>
-                              {link.lastClickAt ? (
-                                <div className="text-sm">
-                                  {new Date(
-                                    link.lastClickAt
-                                  ).toLocaleDateString("zh-TW")}
-                                  <div className="text-xs text-gray-500">
-                                    {new Date(
-                                      link.lastClickAt
-                                    ).toLocaleTimeString("zh-TW", {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    })}
-                                  </div>
-                                </div>
-                              ) : (
-                                <span className="text-gray-400">從未</span>
-                              )}
-                            </TableCell>
-                          )}
-                          {columnVisibility.expiresAt && (
-                            <TableCell>
-                              {link.expiresAt ? (
-                                <div
-                                  className={`text-sm ${
-                                    new Date(link.expiresAt) < new Date()
-                                      ? "text-red-600 dark:text-red-400"
-                                      : new Date(link.expiresAt) <
-                                        new Date(
-                                          Date.now() + 7 * 24 * 60 * 60 * 1000
-                                        )
-                                      ? "text-yellow-600 dark:text-yellow-400"
-                                      : "text-gray-900 dark:text-gray-100"
-                                  }`}
-                                >
-                                  {new Date(link.expiresAt).toLocaleDateString(
-                                    "zh-TW"
-                                  )}
-                                </div>
-                              ) : (
-                                <span className="text-gray-400">永久</span>
-                              )}
-                            </TableCell>
-                          )}
-                          {columnVisibility.createdAt && (
-                            <TableCell>
-                              <div className="text-sm text-gray-600 dark:text-gray-400">
-                                {new Date(link.createdAt).toLocaleDateString(
-                                  "zh-TW"
+                                {columnVisibility.lastClickAt && (
+                                  <TableCell>
+                                    {link.lastClickAt ? (
+                                      <div className="text-sm">
+                                        {new Date(
+                                          link.lastClickAt
+                                        ).toLocaleDateString("zh-TW")}
+                                        <div className="text-xs text-gray-500">
+                                          {new Date(
+                                            link.lastClickAt
+                                          ).toLocaleTimeString("zh-TW", {
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                          })}
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <span className="text-gray-400">
+                                        從未
+                                      </span>
+                                    )}
+                                  </TableCell>
                                 )}
-                              </div>
-                            </TableCell>
-                          )}
-                          {columnVisibility.actions && (
-                            <TableCell>
-                              <div className="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-1">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() =>
-                                    setShowQrCode(
-                                      showQrCode === link.id ? null : link.id
-                                    )
-                                  }
-                                  className="w-full sm:w-auto"
-                                >
-                                  <QrCode className="w-4 h-4" />
-                                  <span className="sm:hidden ml-2">QR</span>
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() =>
-                                    router.push(`/admin/analytics/${link.id}`)
-                                  }
-                                  className="w-full sm:w-auto"
-                                >
-                                  <BarChart className="w-4 h-4" />
-                                  <span className="sm:hidden ml-2">分析</span>
-                                </Button>
-                                <Button size="sm" variant="outline" asChild className="w-full sm:w-auto">
-                                  <a
-                                    href={`${baseUrl}/${link.slug}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    <ExternalLink className="w-4 h-4" />
-                                    <span className="sm:hidden ml-2">訪問</span>
-                                  </a>
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleDeleteLink(link.id, link.title || link.slug)}
-                                  className="w-full sm:w-auto hover:bg-red-50 hover:border-red-300 hover:text-red-600"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                  <span className="sm:hidden ml-2">刪除</span>
-                                </Button>
-                              </div>
-                            </TableCell>
-                          )}
-                        </TableRow>
-                      ))}
-                            </TableBody>
-                          </Table>
-                        </div>
+                                {columnVisibility.expiresAt && (
+                                  <TableCell>
+                                    {link.expiresAt ? (
+                                      <div
+                                        className={`text-sm ${
+                                          new Date(link.expiresAt) < new Date()
+                                            ? "text-red-600 dark:text-red-400"
+                                            : new Date(link.expiresAt) <
+                                              new Date(
+                                                Date.now() +
+                                                  7 * 24 * 60 * 60 * 1000
+                                              )
+                                            ? "text-yellow-600 dark:text-yellow-400"
+                                            : "text-gray-900 dark:text-gray-100"
+                                        }`}
+                                      >
+                                        {new Date(
+                                          link.expiresAt
+                                        ).toLocaleDateString("zh-TW")}
+                                      </div>
+                                    ) : (
+                                      <span className="text-gray-400">
+                                        永久
+                                      </span>
+                                    )}
+                                  </TableCell>
+                                )}
+                                {columnVisibility.createdAt && (
+                                  <TableCell>
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                                      {new Date(
+                                        link.createdAt
+                                      ).toLocaleDateString("zh-TW")}
+                                    </div>
+                                  </TableCell>
+                                )}
+                                {columnVisibility.actions && (
+                                  <TableCell>
+                                    <div className="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-1">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() =>
+                                          setShowQrCode(
+                                            showQrCode === link.id
+                                              ? null
+                                              : link.id
+                                          )
+                                        }
+                                        className="w-full sm:w-auto"
+                                      >
+                                        <QrCode className="w-4 h-4" />
+                                        <span className="sm:hidden ml-2">
+                                          QR
+                                        </span>
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() =>
+                                          router.push(
+                                            `/admin/analytics/${link.id}`
+                                          )
+                                        }
+                                        className="w-full sm:w-auto"
+                                      >
+                                        <BarChart className="w-4 h-4" />
+                                        <span className="sm:hidden ml-2">
+                                          分析
+                                        </span>
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        asChild
+                                        className="w-full sm:w-auto"
+                                      >
+                                        <a
+                                          href={`${baseUrl}/${link.slug}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          <ExternalLink className="w-4 h-4" />
+                                          <span className="sm:hidden ml-2">
+                                            訪問
+                                          </span>
+                                        </a>
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() =>
+                                          handleDeleteLink(
+                                            link.id,
+                                            link.title || link.slug
+                                          )
+                                        }
+                                        className="w-full sm:w-auto hover:bg-red-50 hover:border-red-300 hover:text-red-600"
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                        <span className="sm:hidden ml-2">
+                                          刪除
+                                        </span>
+                                      </Button>
+                                    </div>
+                                  </TableCell>
+                                )}
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
                       </div>
+                    </div>
 
-                      {/* QR Code Display */}
-                      <AnimatePresence>
-                        {showQrCode && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="mt-6"
-                          >
-                            <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-lg">
-                              <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-xl font-semibold text-black">QR Code</h3>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => setShowQrCode(null)}
-                                  className="hover:bg-gray-100"
-                                >
-                                  ✕
-                                </Button>
-                              </div>
-                              <div className="flex justify-center">
-                                <QRCodeGenerator
-                                  url={`${baseUrl}/${
-                                    filteredLinks.find((l) => l.id === showQrCode)?.slug
-                                  }`}
-                                />
-                              </div>
+                    {/* QR Code Display */}
+                    <AnimatePresence>
+                      {showQrCode && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          className="mt-6"
+                        >
+                          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-lg">
+                            <div className="flex justify-between items-center mb-6">
+                              <h3 className="text-xl font-semibold text-black">
+                                QR Code
+                              </h3>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setShowQrCode(null)}
+                                className="hover:bg-gray-100"
+                              >
+                                ✕
+                              </Button>
                             </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
+                            <div className="flex justify-center">
+                              <QRCodeGenerator
+                                url={`${baseUrl}/${
+                                  filteredLinks.find((l) => l.id === showQrCode)
+                                    ?.slug
+                                }`}
+                              />
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
                 )}
               </CardContent>
             </Card>

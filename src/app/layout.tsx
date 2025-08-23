@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { scheduleDbInit } from "@/lib/db-init";
 import "./globals.css";
+
+// 在生產環境中初始化資料庫
+if (process.env.NODE_ENV === 'production') {
+  scheduleDbInit();
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

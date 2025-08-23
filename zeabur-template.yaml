@@ -1,0 +1,234 @@
+# yaml-language-server: $schema=https://schema.zeabur.app/template.json
+apiVersion: zeabur.com/v1
+kind: Template
+metadata:
+    name: short-link-tracker
+spec:
+    description: A complete URL shortener and analytics platform with PostgreSQL and Redis
+    icon: https://service-icons.zeabur.com/git/nodejs/next.js.svg
+    tags: 
+        - Web App
+        - Analytics
+        - URL Shortener
+    readme: |
+        # 短網址追蹤器 Short Link Tracker
+
+        基於 Next.js 15 建構的現代化短網址及分析平台，具備以下功能：
+
+        ## ✨ 主要功能
+        - 🔗 自訂別名的網址縮短服務
+        - 📊 完整的點擊分析與追蹤
+        - 🏷️ 連結分類標籤管理
+        - ⏰ 連結有效期限與點擊次數限制
+        - 🎨 可自訂樣式的 QR Code 產生器
+        - 🔐 管理員儀表板與身份驗證
+        - 📱 響應式設計，支援各種裝置
+
+        ## 🛠 技術架構
+        - **前端**: Next.js 15, React 19, Tailwind CSS
+        - **後端**: Next.js API Routes
+        - **資料庫**: PostgreSQL with Prisma ORM
+        - **快取**: Redis
+        - **部署平台**: Zeabur
+
+        ## 🚀 快速開始
+        1. 部署時設定管理員密碼
+        2. 等待服務啟動完成
+        3. 前往 `/admin` 使用管理員帳號登入
+        4. 開始建立和管理短網址
+
+        ## 🔐 預設設定
+        - 管理員密碼：部署時自訂設定
+        - 所有必要的環境變數都已預先配置
+
+    variables:
+        - key: ADMIN_PASSWORD
+          type: STRING
+          name: 後台密碼
+          description: 請設定後台密碼（登入短網址後台所使用的密碼）：
+        - key: JWT_SECRET
+          type: STRING
+          name: JWT 密鑰
+          description: 請設定用於加密 JWT Token 的密鑰字串，請輸入任意字串（建議使用隨機字串）
+        - key: MAXMIND_LICENSE_KEY
+          type: STRING
+          name: MaxMind 授權金鑰 (選填)
+          description: IP 地理位置服務（MaxMind）的授權金鑰，如不需要可留空（用於分析訪客來源國家）
+    services:
+        - name: postgresql
+          icon: https://cdn.zeabur.com/marketplace/postgresql.svg
+          template: PREBUILT_V2
+          spec:
+            source:
+                image: postgres:17
+            ports:
+                - id: database
+                  port: 5432
+                  type: TCP
+            volumes:
+                - id: data
+                  dir: /var/lib/postgresql/data
+            instructions:
+                - title: Connection String
+                  content: postgresql://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${PORT_FORWARDED_HOSTNAME}:${DATABASE_PORT_FORWARDED_PORT}/${POSTGRES_DATABASE}
+                - title: PostgreSQL Connect Command
+                  content: psql "postgresql://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${PORT_FORWARDED_HOSTNAME}:${DATABASE_PORT_FORWARDED_PORT}/${POSTGRES_DATABASE}"
+                - title: PostgreSQL username
+                  content: ${POSTGRES_USERNAME}
+                - title: PostgresSQL password
+                  content: ${POSTGRES_PASSWORD}
+                - title: PostgresSQL database
+                  content: ${POSTGRES_DATABASE}
+                - title: PostgreSQL host
+                  content: ${PORT_FORWARDED_HOSTNAME}
+                - title: PostgreSQL port
+                  content: ${DATABASE_PORT_FORWARDED_PORT}
+            env:
+                PGDATA:
+                    default: /var/lib/postgresql/data/pgdata
+                    expose: false
+                POSTGRES_CONNECTION_STRING:
+                    default: postgresql://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}
+                    expose: true
+                POSTGRES_DATABASE:
+                    default: ${POSTGRES_DB}
+                    expose: true
+                POSTGRES_DB:
+                    default: zeabur
+                    expose: false
+                POSTGRES_HOST:
+                    default: ${CONTAINER_HOSTNAME}
+                    expose: true
+                POSTGRES_PASSWORD:
+                    default: ${PASSWORD}
+                    expose: true
+                POSTGRES_PORT:
+                    default: ${DATABASE_PORT}
+                    expose: true
+                POSTGRES_URI:
+                    default: ${POSTGRES_CONNECTION_STRING}
+                    expose: true
+                POSTGRES_USER:
+                    default: root
+                    expose: false
+                POSTGRES_USERNAME:
+                    default: ${POSTGRES_USER}
+                    expose: true
+            configs:
+                - path: /etc/postgresql/postgresql.conf
+                  template: |
+                    # https://github.com/postgres/postgres/blob/master/src/backend/utils/misc/postgresql.conf.sample
+                    listen_addresses = '*'
+                    max_connections = 100
+                    shared_buffers = 128MB
+                    dynamic_shared_memory_type = posix
+                    max_wal_size = 1GB
+                    min_wal_size = 80MB
+                    log_timezone = 'Etc/UTC'
+                    datestyle = 'iso, mdy'
+                    timezone = 'Etc/UTC'
+                    lc_messages = 'en_US.utf8'
+                    lc_monetary = 'en_US.utf8'
+                    lc_numeric = 'en_US.utf8'
+                    lc_time = 'en_US.utf8'
+                    default_text_search_config = 'pg_catalog.english'
+                  permission: null
+                  envsubst: null
+            portForwarding:
+                enabled: true
+        - name: redis
+          icon: https://raw.githubusercontent.com/zeabur/service-icons/main/marketplace/redis.svg
+          template: PREBUILT_V2
+          spec:
+            source:
+                image: redis/redis-stack-server:latest
+            ports:
+                - id: database
+                  port: 6379
+                  type: TCP
+            volumes:
+                - id: data
+                  dir: /data
+            instructions:
+                - title: Command to connect to your Redis
+                  content: redis-cli -h ${PORT_FORWARDED_HOSTNAME} -p ${DATABASE_PORT_FORWARDED_PORT} -a ${REDIS_PASSWORD}
+                - title: Redis Connection String
+                  content: redis://:${REDIS_PASSWORD}@${PORT_FORWARDED_HOSTNAME}:${DATABASE_PORT_FORWARDED_PORT}
+                - title: Redis password
+                  content: ${REDIS_PASSWORD}
+                - title: Redis host
+                  content: ${PORT_FORWARDED_HOSTNAME}
+                - title: Redis port
+                  content: ${DATABASE_PORT_FORWARDED_PORT}
+            env:
+                CONFFILE:
+                    default: /etc/redis-stack.conf
+                    expose: false
+                REDIS_ARGS:
+                    default: --requirepass ${REDIS_PASSWORD}
+                    expose: false
+                REDIS_CONNECTION_STRING:
+                    default: redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}
+                    expose: true
+                REDIS_HOST:
+                    default: ${CONTAINER_HOSTNAME}
+                    expose: true
+                REDIS_PASSWORD:
+                    default: ${PASSWORD}
+                    expose: true
+                REDIS_PORT:
+                    default: ${DATABASE_PORT}
+                    expose: true
+                REDIS_URI:
+                    default: ${REDIS_CONNECTION_STRING}
+                    expose: true
+            configs:
+                - path: /etc/redis-stack.conf
+                  template: |
+                    port 6379
+                    daemonize no
+                  permission: null
+                  envsubst: null
+            portForwarding:
+                enabled: true
+        - name: short-link-tracker
+          icon: https://service-icons.zeabur.com/git/nodejs/next.js.svg
+          template: PREBUILT_V2
+          depends:
+            - postgresql
+            - redis
+          spec:
+            source:
+                source: GITHUB
+                repo: 1042274782
+                branch: main
+                rootDirectory: /
+            ports:
+                - id: web
+                  port: 8080
+                  type: HTTP
+            env:
+                NODE_ENV:
+                    default: production
+                    expose: false
+                ADMIN_PASSWORD:
+                    default: ${ADMIN_PASSWORD}
+                    expose: false
+                DATABASE_URL:
+                    default: ${POSTGRES_CONNECTION_STRING}?schema=public
+                    expose: false
+                JWT_SECRET:
+                    default: ${JWT_SECRET}
+                    expose: false
+                MAXMIND_LICENSE_KEY:
+                    default: ${MAXMIND_LICENSE_KEY}
+                    expose: false
+                PORT:
+                    default: ${WEB_PORT}
+                    expose: false
+                REDIS_URL:
+                    default: ${REDIS_CONNECTION_STRING}
+                    expose: false
+            configs: []
+            portForwarding:
+                enabled: false
