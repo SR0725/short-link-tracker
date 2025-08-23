@@ -25,7 +25,7 @@ export async function initializeDatabase() {
       );
     `;
     
-    // @ts-ignore
+    // @ts-expect-error - tablesExist is a raw query result
     if (!tablesExist[0]?.exists) {
       console.log('🔄 Running database migrations...');
       
