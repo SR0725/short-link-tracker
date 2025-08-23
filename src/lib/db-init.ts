@@ -30,8 +30,21 @@ export async function initializeDatabase() {
       console.log('🔄 Running database migrations...');
       
       // 執行 Prisma 遷移
-      await execAsync('npx prisma migrate deploy');
+      const migrateResult = await execAsync('npx prisma migrate deploy');
+      console.log('📋 Migration output:', migrateResult.stdout);
+      if (migrateResult.stderr) {
+        console.warn('⚠️ Migration warnings:', migrateResult.stderr);
+      }
       console.log('✅ Database migrations completed');
+      
+      // 生成 Prisma client
+      console.log('🔄 Generating Prisma client...');
+      const generateResult = await execAsync('npx prisma generate');
+      console.log('📋 Generate output:', generateResult.stdout);
+      if (generateResult.stderr) {
+        console.warn('⚠️ Generate warnings:', generateResult.stderr);
+      }
+      console.log('✅ Prisma client generated');
     } else {
       console.log('✅ Database already initialized');
     }
