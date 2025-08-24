@@ -250,6 +250,12 @@ pnpm dev
 - **Docker**：使用內附的 Dockerfile 容器化部署
 - **傳統主機**：部署至 VPS，搭配 PostgreSQL 和 Redis 實例
 
+## 問題回報與支援
+
+如果您在使用過程中遇到問題或有任何建議，歡迎加入我們的 Discord 社群討論：
+
+[![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/fH8BxMWaYb)
+
 ## 授權條款
 
 MIT 授權條款 - 詳細資訊請參見 LICENSE 檔案。
