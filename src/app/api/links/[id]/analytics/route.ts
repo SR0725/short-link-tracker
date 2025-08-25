@@ -34,6 +34,7 @@ export async function GET(
 
     const { searchParams } = new URL(request.url)
     const days = parseInt(searchParams.get('days') || '7')
+    const timezone = searchParams.get('timezone') || 'UTC'
     
     const startDate = new Date()
     startDate.setDate(startDate.getDate() - days)
@@ -49,10 +50,10 @@ export async function GET(
       orderBy: { timestamp: 'asc' }
     })
 
-    // Group clicks by date
+    // Group clicks by date (in user's timezone)
     const clicksByDate: { [key: string]: number } = {}
     clicks.forEach(click => {
-      const date = click.timestamp.toISOString().split('T')[0]
+      const date = click.timestamp.toLocaleDateString('sv-SE', { timeZone: timezone })
       clicksByDate[date] = (clicksByDate[date] || 0) + 1
     })
 
@@ -122,10 +123,12 @@ export async function GET(
       .slice(0, 10)
       .map(([city, count]) => ({ city, count }))
 
-    // Get hourly distribution (0-23 hours)
+    // Get hourly distribution (0-23 hours) in user's timezone
     const hourlyCounts: { [key: number]: number } = {}
     clicks.forEach(click => {
-      const hour = click.timestamp.getHours()
+      // Convert to user's timezone and get hour
+      const userTime = new Date(click.timestamp.toLocaleString('en-US', { timeZone: timezone }))
+      const hour = userTime.getHours()
       hourlyCounts[hour] = (hourlyCounts[hour] || 0) + 1
     })
 

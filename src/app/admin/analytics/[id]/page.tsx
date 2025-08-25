@@ -118,7 +118,9 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
     
     setIsLoading(true)
     try {
-      const response = await fetch(`/api/links/${resolvedParams.id}/analytics?days=${period}`)
+      // Get user's timezone
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+      const response = await fetch(`/api/links/${resolvedParams.id}/analytics?days=${period}&timezone=${encodeURIComponent(userTimezone)}`)
       
       if (response.status === 401) {
         router.push('/login')
