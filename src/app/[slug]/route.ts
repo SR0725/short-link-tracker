@@ -14,7 +14,10 @@ export async function GET(
     })
 
     if (!link) {
-      return NextResponse.redirect(new URL(`/404`, request.url))
+      const host = request.headers.get('host')
+      const protocol = request.headers.get('x-forwarded-proto') || 'https'
+      const baseUrl = host ? `${protocol}://${host}` : new URL(request.url).origin
+      return NextResponse.redirect(new URL('/404', baseUrl))
     }
 
     // Record the click asynchronously
@@ -26,6 +29,9 @@ export async function GET(
     return NextResponse.redirect(link.targetUrl, { status: 302 })
   } catch (error) {
     console.error('Redirect error:', error)
-    return NextResponse.redirect(new URL(`/404`, request.url))
+    const host = request.headers.get('host')
+    const protocol = request.headers.get('x-forwarded-proto') || 'https'
+    const baseUrl = host ? `${protocol}://${host}` : new URL(request.url).origin
+    return NextResponse.redirect(new URL('/404', baseUrl))
   }
 }
