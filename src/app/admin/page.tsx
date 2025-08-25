@@ -38,6 +38,7 @@ import {
   Filter,
   Link as LinkIcon,
   Trash2,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -85,16 +86,35 @@ export default function AdminPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [showColumnOptions, setShowColumnOptions] = useState(false);
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>({
-    title: true,
-    shortUrl: true,
-    targetUrl: true,
-    clickCount: true,
-    expiresAt: true,
-    actions: true,
-    lastClickAt: false,
-    createdAt: false,
-  });
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(
+    () => {
+      // Load from localStorage on initial render
+      if (typeof window !== "undefined") {
+        const saved = localStorage.getItem("admin-column-visibility");
+        if (saved) {
+          try {
+            return JSON.parse(saved);
+          } catch (e) {
+            console.error(
+              "Failed to parse column visibility from localStorage:",
+              e
+            );
+          }
+        }
+      }
+      // Default values if no saved settings
+      return {
+        title: true,
+        shortUrl: true,
+        targetUrl: true,
+        clickCount: true,
+        expiresAt: true,
+        actions: true,
+        lastClickAt: false,
+        createdAt: false,
+      };
+    }
+  );
   const router = useRouter();
 
   const baseUrl =
@@ -104,10 +124,20 @@ export default function AdminPage() {
 
   // Helper function to toggle column visibility
   const toggleColumnVisibility = (column: keyof ColumnVisibility) => {
-    setColumnVisibility((prev) => ({
-      ...prev,
-      [column]: !prev[column],
-    }));
+    setColumnVisibility((prev) => {
+      const newVisibility = {
+        ...prev,
+        [column]: !prev[column],
+      };
+      // Save to localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "admin-column-visibility",
+          JSON.stringify(newVisibility)
+        );
+      }
+      return newVisibility;
+    });
   };
 
   useEffect(() => {
@@ -315,30 +345,30 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="space-y-12"
+          className="space-y-6 sm:space-y-8 lg:space-y-12"
         >
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6"
+            className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6"
           >
             <div className="space-y-2">
-              <div className="flex items-center space-x-4 mb-2">
-                <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center">
-                  <LinkIcon className="w-6 h-6 text-white" />
+              <div className="flex items-center space-x-3 sm:space-x-4 mb-2">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black rounded-xl sm:rounded-2xl flex items-center justify-center">
+                  <LinkIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-4xl lg:text-5xl font-black text-black tracking-tight">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-black tracking-tight">
                     管理中心
                   </h1>
-                  <p className="text-xl text-gray-600 mt-1">
+                  <p className="text-base sm:text-lg lg:text-xl text-gray-600 mt-1">
                     掌控你的每一個連結
                   </p>
                 </div>
@@ -348,12 +378,12 @@ export default function AdminPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex gap-3"
+              className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto"
             >
               <Button
                 onClick={() => router.push("/admin/settings")}
                 variant="outline"
-                size="lg"
+                size="default"
                 className="border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-colors"
               >
                 <Settings className="w-5 h-5 mr-2" />
@@ -361,7 +391,7 @@ export default function AdminPage() {
               </Button>
               <Button
                 onClick={handleLogout}
-                size="lg"
+                size="default"
                 className="bg-black hover:bg-gray-800 text-white transition-colors"
               >
                 <LogOut className="w-5 h-5 mr-2" />
@@ -595,18 +625,18 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent className="pt-0">
                 {/* Search and Column Visibility Controls */}
-                <div className="flex flex-col lg:flex-row gap-4 mb-8">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
                   {/* Search Input */}
                   <motion.div
                     className="flex-1 relative"
                     whileFocus={{ scale: 1.02 }}
                   >
-                    <Search className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
+                    <Search className="absolute left-3 sm:left-4 top-3 sm:top-4 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                     <Input
                       placeholder="搜尋標題、標籤、目標網址或短碼..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-12 h-14 text-base border-gray-300 focus:border-black focus:ring-black rounded-xl"
+                      className="pl-10 sm:pl-12 h-12 sm:h-14 text-sm sm:text-base border-gray-300 focus:border-black focus:ring-black rounded-xl"
                     />
                   </motion.div>
 
@@ -614,9 +644,9 @@ export default function AdminPage() {
                   <div className="relative">
                     <Button
                       variant="outline"
-                      size="lg"
+                      size="default"
                       onClick={() => setShowColumnOptions(!showColumnOptions)}
-                      className="flex items-center gap-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 h-14"
+                      className="hidden lg:flex items-center gap-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 h-12 sm:h-14"
                     >
                       <Filter className="w-5 h-5" />
                       欄位顯示
@@ -635,7 +665,8 @@ export default function AdminPage() {
                           animate={{ opacity: 1, scale: 1, y: 0 }}
                           exit={{ opacity: 0, scale: 0.95, y: -10 }}
                           transition={{ duration: 0.2 }}
-                          className="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-2xl shadow-xl z-10 max-h-80 overflow-y-auto"
+                          className="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 max-h-80 overflow-y-auto"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <div className="p-6 space-y-4">
                             <div className="text-base font-semibold text-black">
@@ -758,15 +789,15 @@ export default function AdminPage() {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="text-center py-16"
+                    className="text-center py-12 sm:py-16"
                   >
-                    <div className="w-24 h-24 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                      <LinkIcon className="w-12 h-12 text-gray-400" />
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                      <LinkIcon className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
                     </div>
-                    <h3 className="text-xl font-semibold text-black mb-2">
+                    <h3 className="text-lg sm:text-xl font-semibold text-black mb-2">
                       還沒有短網址
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-sm sm:text-base text-gray-600">
                       建立您的第一個短連結開始使用吧！
                     </p>
                   </motion.div>
@@ -774,15 +805,15 @@ export default function AdminPage() {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="text-center py-16"
+                    className="text-center py-12 sm:py-16"
                   >
-                    <div className="w-24 h-24 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                      <Search className="w-12 h-12 text-gray-400" />
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                      <Search className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
                     </div>
-                    <h3 className="text-xl font-semibold text-black mb-2">
+                    <h3 className="text-lg sm:text-xl font-semibold text-black mb-2">
                       找不到符合條件的連結
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-sm sm:text-base text-gray-600">
                       試試調整搜尋條件或建立新的短連結
                     </p>
                   </motion.div>
@@ -792,7 +823,8 @@ export default function AdminPage() {
                     animate={{ opacity: 1 }}
                     className="space-y-6"
                   >
-                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                    {/* Desktop Table View */}
+                    <div className="hidden lg:block bg-gray-50 rounded-2xl p-6 border border-gray-200">
                       <div className="overflow-x-auto">
                         <Table className="min-w-full">
                           <TableHeader>
@@ -1067,6 +1099,24 @@ export default function AdminPage() {
                                           刪除
                                         </span>
                                       </Button>
+
+                                      {!columnVisibility.shortUrl && (
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() =>
+                                            copyToClipboard(
+                                              `${baseUrl}/${link.slug}`
+                                            )
+                                          }
+                                          className="w-full sm:w-auto"
+                                        >
+                                          <Copy className="w-4 h-4" />
+                                          <span className="sm:hidden ml-2">
+                                            複製
+                                          </span>
+                                        </Button>
+                                      )}
                                     </div>
                                   </TableCell>
                                 )}
@@ -1077,41 +1127,198 @@ export default function AdminPage() {
                       </div>
                     </div>
 
-                    {/* QR Code Display */}
-                    <AnimatePresence>
-                      {showQrCode && (
+                    {/* Mobile Card View */}
+                    <div className="lg:hidden space-y-4">
+                      {filteredLinks.map((link) => (
                         <motion.div
-                          initial={{ opacity: 0, y: 20 }}
+                          key={link.id}
+                          initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          className="mt-6"
+                          className="bg-white border-2 border-gray-200 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all duration-300"
                         >
-                          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-lg">
-                            <div className="flex justify-between items-center mb-6">
-                              <h3 className="text-xl font-semibold text-black">
-                                QR Code
-                              </h3>
+                          {/* Card Header - Compact */}
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <h3 className="font-semibold text-gray-900 truncate text-base">
+                                  {link.title || link.slug}
+                                </h3>
+                                {link.tag && (
+                                  <Badge
+                                    variant="default"
+                                    className="text-xs flex-shrink-0"
+                                  >
+                                    {link.tag}
+                                  </Badge>
+                                )}
+                              </div>
+                              {link.title && (
+                                <p className="text-xs text-gray-500 truncate mt-0.5">
+                                  /{link.slug}
+                                </p>
+                              )}
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() =>
+                                copyToClipboard(`${baseUrl}/${link.slug}`)
+                              }
+                              className="p-1 flex-shrink-0 hover:bg-gray-100"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                          {/* URLs Section - More Compact */}
+                          <div className="space-y-1.5 mb-3">
+                            <div className="p-2 bg-blue-50 rounded-lg flex items-center gap-2">
+                              <span className="text-xs text-blue-900 break-all line-clamp-2 flex items-center gap-2">
+                                <LinkIcon className="w-3 h-3 text-blue-600" />
+                                {`${baseUrl}/${link.slug}`}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="space-y-1.5 mb-3">
+                            <a
+                              href={link.targetUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 bg-green-50 rounded-lg flex items-center gap-2"
+                            >
+                              <span className="text-xs text-green-900 break-all line-clamp-2 flex items-center gap-2">
+                                <ExternalLink className="w-3 h-3 text-green-600" />
+                                {link.targetUrl}
+                              </span>
+                            </a>
+                          </div>
+
+                          {/* Metadata and Actions Combined */}
+                          <div className="space-y-3">
+                            {/* Metadata */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                              <div className="bg-gray-50 rounded-lg p-2">
+                                <span className="text-gray-500 font-medium">
+                                  建立時間
+                                </span>
+                                <div className="text-gray-700 font-semibold mt-0.5 text-xs">
+                                  {new Date(link.createdAt).toLocaleDateString(
+                                    "zh-TW",
+                                    { month: "short", day: "numeric" }
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="bg-gray-50 rounded-lg p-2">
+                                <span className="text-gray-500 font-medium flex items-center gap-1">
+                                  <Eye className="w-3 h-3" />
+                                  點擊數 / 點擊上限
+                                </span>
+                                <div className="text-gray-700 font-semibold mt-0.5 text-xs">
+                                  {link.clickCount}
+                                  {link.clickLimit
+                                    ? ` / ${link.clickLimit}`
+                                    : ""}
+                                </div>
+                              </div>
+
+                              <div className="bg-gray-50 rounded-lg p-2">
+                                <span className="text-gray-500 font-medium">
+                                  最近一次點擊
+                                </span>
+                                <div className="text-gray-700 font-semibold mt-0.5 text-xs">
+                                  {link.lastClickAt
+                                    ? new Date(
+                                        link.lastClickAt
+                                      ).toLocaleDateString("zh-TW", {
+                                        month: "short",
+                                        day: "numeric",
+                                      })
+                                    : "從未點擊"}
+                                </div>
+                              </div>
+                              <div className="bg-gray-50 rounded-lg p-2">
+                                <span className="text-gray-500 font-medium">
+                                  過期時間
+                                </span>
+                                <div className="text-gray-700 font-semibold mt-0.5 text-xs">
+                                  {link.expiresAt
+                                    ? new Date(
+                                        link.expiresAt
+                                      ).toLocaleDateString("zh-TW", {
+                                        month: "short",
+                                        day: "numeric",
+                                      })
+                                    : "永久"}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="grid grid-cols-4 gap-2">
                               <Button
                                 size="sm"
-                                variant="ghost"
-                                onClick={() => setShowQrCode(null)}
-                                className="hover:bg-gray-100"
+                                variant="outline"
+                                onClick={() =>
+                                  setShowQrCode(
+                                    showQrCode === link.id ? null : link.id
+                                  )
+                                }
+                                className="flex items-center justify-center gap-1 py-2.5 h-auto whitespace-nowrap border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-colors"
                               >
-                                ✕
+                                <QrCode className="w-4 h-4" />
+                                <span className="text-xs font-medium">QR</span>
                               </Button>
-                            </div>
-                            <div className="flex justify-center">
-                              <QRCodeGenerator
-                                url={`${baseUrl}/${
-                                  filteredLinks.find((l) => l.id === showQrCode)
-                                    ?.slug
-                                }`}
-                              />
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  router.push(`/admin/analytics/${link.id}`)
+                                }
+                                className="flex items-center justify-center gap-1 py-2.5 h-auto whitespace-nowrap border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-colors"
+                              >
+                                <BarChart className="w-4 h-4" />
+                                <span className="text-xs font-medium">
+                                  分析
+                                </span>
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                asChild
+                                className="flex items-center justify-center gap-1 py-2.5 h-auto whitespace-nowrap border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-colors"
+                              >
+                                <a
+                                  href={`${baseUrl}/${link.slug}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <ExternalLink className="w-4 h-4" />
+                                  <span className="text-xs font-medium">
+                                    訪問
+                                  </span>
+                                </a>
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  handleDeleteLink(
+                                    link.id,
+                                    link.title || link.slug
+                                  )
+                                }
+                                className="flex items-center justify-center gap-1 py-2.5 h-auto whitespace-nowrap border-gray-300 hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                <span className="text-xs font-medium">
+                                  刪除
+                                </span>
+                              </Button>
                             </div>
                           </div>
                         </motion.div>
-                      )}
-                    </AnimatePresence>
+                      ))}
+                    </div>
                   </motion.div>
                 )}
               </CardContent>
@@ -1120,6 +1327,55 @@ export default function AdminPage() {
         </motion.div>
       </div>
 
+      {/* QR Code Modal */}
+      <AnimatePresence>
+        {showQrCode && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50"
+              onClick={() => setShowQrCode(null)}
+            />
+
+            {/* Modal */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+              onClick={() => setShowQrCode(null)}
+            >
+              <div
+                className="bg-white rounded-2xl shadow-2xl w-fit mx-auto my-8 p-4 sm:p-6 max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <h3 className="text-lg sm:text-xl font-semibold text-black">
+                    QR Code
+                  </h3>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setShowQrCode(null)}
+                    className="hover:bg-gray-100 p-1"
+                  >
+                    ✕
+                  </Button>
+                </div>
+                <QRCodeGenerator
+                  url={`${baseUrl}/${
+                    filteredLinks.find((l) => l.id === showQrCode)?.slug
+                  }`}
+                />
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* Click outside handler for column options */}
       <AnimatePresence>
         {showColumnOptions && (
@@ -1127,7 +1383,7 @@ export default function AdminPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-0"
+            className="fixed inset-0 z-40"
             onClick={() => setShowColumnOptions(false)}
           />
         )}

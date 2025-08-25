@@ -229,66 +229,72 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-8 py-12 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 space-y-6 sm:space-y-8 lg:space-y-12">
         {/* Enhanced Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white border-2 border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+          className="bg-white border-2 border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
         >
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <div className="flex items-center space-x-6">
+          <div className="space-y-4 lg:space-y-0 lg:flex lg:items-center lg:justify-between lg:gap-6">
+            {/* Top section with back button and title */}
+            <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-start sm:space-x-4 lg:space-x-6">
               <Button
                 variant="outline"
-                size="lg"
+                size="sm"
                 onClick={() => router.push('/admin')}
-                className="border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                className="border-gray-300 hover:bg-gray-50 hover:border-gray-400 self-start sm:self-center"
               >
-                <ArrowLeft className="w-5 h-5 mr-2" />
-                返回儀表板
+                <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">返回儀表板</span>
+                <span className="sm:hidden">返回</span>
               </Button>
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-white" />
+              
+              <div className="flex items-start sm:items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <div>
-                  <h1 className="text-4xl lg:text-5xl font-black text-black tracking-tight">
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-black tracking-tight">
                     分析中心
                   </h1>
-                  <div className="mt-2 space-y-1">
-                    <p className="text-lg text-gray-700 font-medium break-all">
+                  <div className="mt-1 sm:mt-2 space-y-1">
+                    <p className="text-sm sm:text-base lg:text-lg text-gray-700 font-medium break-all">
                       {baseUrl}/{data.link.slug}
                     </p>
-                    <p className="text-base text-gray-600 flex items-center">
-                      <ExternalLink className="w-4 h-4 mr-2 flex-shrink-0" />
-                      <span className="break-all">{data.link.targetUrl}</span>
+                    <p className="text-xs sm:text-sm lg:text-base text-gray-600 flex items-start">
+                      <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0 mt-0.5" />
+                      <span className="break-all leading-tight">{data.link.targetUrl}</span>
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
+            
+            {/* Action buttons */}
+            <div className="flex flex-col xs:flex-row gap-2 sm:gap-3 lg:flex-shrink-0">
               <Button
                 variant="outline"
-                size="lg"
+                size="sm"
                 asChild
-                className="border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                className="border-gray-300 hover:bg-gray-50 hover:border-gray-400 text-sm"
               >
                 <a
                   href={`${baseUrl}/${data.link.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <ExternalLink className="w-5 h-5 mr-2" />
-                  訪問連結
+                  <ExternalLink className="w-4 h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">訪問連結</span>
+                  <span className="sm:hidden">訪問</span>
                 </a>
               </Button>
               <Button 
                 onClick={handleExport} 
-                size="lg"
-                className="bg-black hover:bg-gray-800 text-white"
+                size="sm"
+                className="bg-black hover:bg-gray-800 text-white text-sm"
               >
-                <Download className="w-5 h-5 mr-2" />
+                <Download className="w-4 h-4 mr-1 sm:mr-2" />
                 匯出 CSV
               </Button>
             </div>
@@ -300,66 +306,66 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6"
         >
           <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-4">
+            <CardHeader className="pb-3 sm:pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold text-gray-700">總點擊數</CardTitle>
-                <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center">
-                  <Eye className="w-5 h-5 text-white" />
+                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700">總點擊數</CardTitle>
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-black text-black">{formatNumber(data.link.totalClicks)}</div>
+              <div className="text-2xl sm:text-3xl font-black text-black">{formatNumber(data.link.totalClicks)}</div>
             </CardContent>
           </Card>
           
           <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-4">
+            <CardHeader className="pb-3 sm:pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold text-gray-700">期間點擊 ({data.analytics.period})</CardTitle>
-                <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-white" />
+                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700 leading-tight">期間點擊 ({data.analytics.period})</CardTitle>
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-black text-black">{formatNumber(data.analytics.totalClicksInPeriod)}</div>
-              <div className="text-sm text-gray-600 mt-2">平均每日: {averageClicksPerDay}</div>
+              <div className="text-2xl sm:text-3xl font-black text-black">{formatNumber(data.analytics.totalClicksInPeriod)}</div>
+              <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2">平均每日: {averageClicksPerDay}</div>
             </CardContent>
           </Card>
           
           <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-4">
+            <CardHeader className="pb-3 sm:pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold text-gray-700">覆蓋國家</CardTitle>
-                <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center">
-                  <Globe className="w-5 h-5 text-white" />
+                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700">覆蓋國家</CardTitle>
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-black text-black">{totalUniqueCountries}</div>
-              <div className="text-sm text-gray-600 mt-2">主要來源: {topCountry}</div>
+              <div className="text-2xl sm:text-3xl font-black text-black">{totalUniqueCountries}</div>
+              <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2 leading-tight">主要來源: {topCountry}</div>
             </CardContent>
           </Card>
           
           <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-4">
+            <CardHeader className="pb-3 sm:pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-semibold text-gray-700">建立時間</CardTitle>
-                <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-white" />
+                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700">建立時間</CardTitle>
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-black text-black">
+              <div className="text-lg sm:text-2xl font-black text-black leading-tight">
                 {new Date(data.link.createdAt).toLocaleDateString('zh-TW')}
               </div>
-              <div className="text-sm text-gray-600 mt-2">主要裝置: {topDevice}</div>
+              <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2 leading-tight">主要裝置: {topDevice}</div>
             </CardContent>
           </Card>
         </motion.div>
@@ -369,21 +375,21 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white border-2 border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+          className="bg-white border-2 border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
         >
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
             <div>
-              <h3 className="text-2xl font-bold text-black">時間範圍</h3>
-              <p className="text-base text-gray-600 mt-1">選擇要查看的分析時段</p>
+              <h3 className="text-xl sm:text-2xl font-bold text-black">時間範圍</h3>
+              <p className="text-sm sm:text-base text-gray-600 mt-1">選擇要查看的分析時段</p>
             </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-3">
               {[7, 30, 90].map((days) => (
                 <Button
                   key={days}
                   variant={period === days ? 'default' : 'outline'}
-                  size="lg"
+                  size="sm"
                   onClick={() => setPeriod(days)}
-                  className={`${period === days ? 
+                  className={`text-sm ${period === days ? 
                     'bg-black text-white hover:bg-gray-800' : 
                     'border-gray-300 hover:bg-gray-50 hover:border-gray-400 text-gray-700'
                   }`}
@@ -402,23 +408,21 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           transition={{ delay: 0.3 }}
           className="bg-white border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
         >
-          <div className="p-8 border-b-2 border-gray-200">
-            <h3 className="text-2xl font-bold text-black flex items-center">
-              <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center mr-3">
-                <Globe className="w-5 h-5 text-white" />
+          <div className="p-4 sm:p-6 lg:p-8 border-b-2 border-gray-200">
+            <h3 className="text-xl sm:text-2xl font-bold text-black flex items-center">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center mr-2 sm:mr-3">
+                <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               全球點擊分佈
             </h3>
-            <p className="text-base text-gray-600 mt-2">
-              顏色越深表示該地區的點擊量越高，滑鼠移到國家上查看詳細資訊
+            <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
+              <span className="hidden sm:inline">顏色越深表示該地區的點擊量越高，滑鼠移到國家上查看詳細資訊</span>
+              <span className="sm:hidden">點擊國家查看詳細資訊</span>
             </p>
           </div>
           <div className="p-2 sm:p-4 lg:p-6 relative">
-            <div className="w-full h-64 sm:h-96 md:h-[400px] lg:h-[500px] xl:h-[600px] bg-slate-50 dark:bg-slate-900 rounded-xl overflow-hidden relative">
+            <div className="w-full h-48 xs:h-56 sm:h-80 md:h-96 lg:h-[400px] xl:h-[500px] bg-slate-50 dark:bg-slate-900 rounded-xl overflow-hidden relative touch-pan-x touch-pan-y">
               <ComposableMap
-                projectionConfig={{
-                  scale: typeof window !== 'undefined' && window.innerWidth < 640 ? 100 : typeof window !== 'undefined' && window.innerWidth < 1024 ? 140 : 160,
-                }}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -481,22 +485,22 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                 </Geographies>
               </ComposableMap>
               
-              {/* Tooltip */}
+              {/* Enhanced Tooltip for mobile */}
               {tooltipContent && (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="absolute bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-3 z-10 pointer-events-none"
+                  className="absolute bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 sm:p-3 z-10 pointer-events-none max-w-[200px] sm:max-w-none"
                   style={{
-                    left: `${tooltipContent.x}px`,
-                    top: `${tooltipContent.y}px`,
+                    left: `${Math.min(Math.max(tooltipContent.x, 100), typeof window !== 'undefined' ? window.innerWidth - 200 : 300)}px`,
+                    top: `${Math.max(tooltipContent.y - 10, 10)}px`,
                     transform: 'translate(-50%, -100%)'
                   }}
                 >
-                  <div className="font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                  <div className="font-semibold text-slate-800 dark:text-slate-200 text-sm sm:text-base whitespace-nowrap">
                     {tooltipContent.name}
                   </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                  <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">
                     點擊數: <span className="font-medium text-indigo-600 dark:text-indigo-400">{formatNumber(tooltipContent.count)}</span>
                   </div>
                   {tooltipContent.count > 0 && (
@@ -509,30 +513,46 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
             </div>
             
             {/* Enhanced Color Legend */}
-            <div className="mt-4 sm:mt-6 space-y-3">
+            <div className="mt-3 sm:mt-4 lg:mt-6 space-y-2 sm:space-y-3">
               <div className="text-center">
                 <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
-                  點擊數量分佈 {maxCountryClicks > 100 && <span className="text-xs">(對數比例)</span>}
+                  點擊數量分佈 {maxCountryClicks > 100 && <span className="text-xs hidden sm:inline">(對數比例)</span>}
                 </span>
               </div>
-              <div className="flex items-center justify-center space-x-1 sm:space-x-2 overflow-x-auto">
-                <span className="text-xs text-slate-500 w-6 sm:w-8 flex-shrink-0">0</span>
-                <div className="flex space-x-1 overflow-x-auto">
+              <div className="flex items-center justify-center space-x-1 sm:space-x-2 px-2 overflow-x-auto scrollbar-hide">
+                <span className="text-xs text-slate-500 w-4 sm:w-6 lg:w-8 flex-shrink-0">0</span>
+                <div className="flex space-x-0.5 sm:space-x-1 overflow-x-auto scrollbar-hide">
                   {maxCountryClicks > 100 ? 
-                    // Logarithmic legend
-                    [1, 5, 25, 125, 625, maxCountryClicks].map((value, index) => (
-                      <div key={index} className="flex flex-col items-center flex-shrink-0">
-                        <div
-                          className="w-4 h-3 sm:w-6 sm:h-4 border border-slate-400 dark:border-slate-500"
-                          style={{
-                            backgroundColor: getCountryColor(Math.min(value, maxCountryClicks), maxCountryClicks)
-                          }}
-                        />
-                        <span className="text-xs text-slate-400 mt-1">
-                          {formatNumber(Math.min(value, maxCountryClicks))}
-                        </span>
-                      </div>
-                    ))
+                    // Logarithmic legend (fewer items for mobile)
+                    (typeof window !== 'undefined' && window.innerWidth < 640 ?
+                      [1, 25, maxCountryClicks].map((value, index) => (
+                        <div key={index} className="flex flex-col items-center flex-shrink-0">
+                          <div
+                            className="w-3 h-3 sm:w-4 sm:h-3 lg:w-6 lg:h-4 border border-slate-400 dark:border-slate-500"
+                            style={{
+                              backgroundColor: getCountryColor(Math.min(value, maxCountryClicks), maxCountryClicks)
+                            }}
+                          />
+                          <span className="text-xs text-slate-400 mt-0.5 sm:mt-1">
+                            {formatNumber(Math.min(value, maxCountryClicks))}
+                          </span>
+                        </div>
+                      ))
+                      : 
+                      [1, 5, 25, 125, 625, maxCountryClicks].map((value, index) => (
+                        <div key={index} className="flex flex-col items-center flex-shrink-0">
+                          <div
+                            className="w-3 h-3 sm:w-4 sm:h-3 lg:w-6 lg:h-4 border border-slate-400 dark:border-slate-500"
+                            style={{
+                              backgroundColor: getCountryColor(Math.min(value, maxCountryClicks), maxCountryClicks)
+                            }}
+                          />
+                          <span className="text-xs text-slate-400 mt-0.5 sm:mt-1">
+                            {formatNumber(Math.min(value, maxCountryClicks))}
+                          </span>
+                        </div>
+                      ))
+                    )
                     :
                     // Linear legend
                     [0, 0.2, 0.4, 0.6, 0.8, 1].map((ratio, index) => {
@@ -540,13 +560,13 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                       return (
                         <div key={index} className="flex flex-col items-center flex-shrink-0">
                           <div
-                            className="w-4 h-3 sm:w-6 sm:h-4 border border-slate-400 dark:border-slate-500"
+                            className="w-3 h-3 sm:w-4 sm:h-3 lg:w-6 lg:h-4 border border-slate-400 dark:border-slate-500"
                             style={{
                               backgroundColor: getCountryColor(value, maxCountryClicks)
                             }}
                           />
                           {index > 0 && (
-                            <span className="text-xs text-slate-400 mt-1">
+                            <span className="text-xs text-slate-400 mt-0.5 sm:mt-1">
                               {formatNumber(value)}
                             </span>
                           )}
@@ -555,7 +575,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                     })
                   }
                 </div>
-                <span className="text-xs text-slate-500 w-6 sm:w-8 flex-shrink-0">{formatNumber(maxCountryClicks)}</span>
+                <span className="text-xs text-slate-500 w-4 sm:w-6 lg:w-8 flex-shrink-0">{formatNumber(maxCountryClicks)}</span>
               </div>
             </div>
           </div>
@@ -568,21 +588,21 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           transition={{ delay: 0.4 }}
           className="bg-white border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
         >
-          <div className="p-8 border-b-2 border-gray-200">
-            <h3 className="text-2xl font-bold text-black flex items-center">
-              <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center mr-3">
-                <TrendingUp className="w-5 h-5 text-white" />
+          <div className="p-4 sm:p-6 lg:p-8 border-b-2 border-gray-200">
+            <h3 className="text-xl sm:text-2xl font-bold text-black flex items-center">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center mr-2 sm:mr-3">
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               點擊趨勢
             </h3>
-            <p className="text-base text-gray-600 mt-2">
+            <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
               過去 {period} 天的每日點擊分析
             </p>
           </div>
-          <CardContent className="p-6">
-            <div className="h-60 sm:h-80">
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <div className="h-48 xs:h-56 sm:h-64 lg:h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data.analytics.timeline}>
+                <AreaChart data={data.analytics.timeline} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                   <defs>
                     <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#6366f1" stopOpacity={0.8}/>
@@ -592,10 +612,21 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                   <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                   <XAxis 
                     dataKey="date" 
-                    tickFormatter={(value) => new Date(value).toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' })}
+                    tickFormatter={(value) => {
+                      const date = new Date(value)
+                      return typeof window !== 'undefined' && window.innerWidth < 640 ?
+                        `${date.getMonth() + 1}/${date.getDate()}` :
+                        date.toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' })
+                    }}
                     className="text-slate-600 dark:text-slate-400"
+                    fontSize={12}
+                    interval="preserveStartEnd"
                   />
-                  <YAxis className="text-slate-600 dark:text-slate-400" />
+                  <YAxis 
+                    className="text-slate-600 dark:text-slate-400" 
+                    fontSize={12}
+                    width={30}
+                  />
                   <Tooltip 
                     labelFormatter={(value) => new Date(value).toLocaleDateString('zh-TW')}
                     formatter={(value) => [`${value} 次點擊`, '點擊數']}
@@ -603,7 +634,8 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
                       border: '1px solid #e2e8f0',
                       borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                      fontSize: '14px'
                     }}
                   />
                   <Area 
@@ -623,43 +655,43 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
         >
             {/* Enhanced Top Referrers */}
             <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/60 dark:border-slate-700/60 rounded-2xl shadow-lg overflow-hidden">
-              <div className="p-6 border-b border-slate-200 dark:border-slate-700">
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center">
-                  <ExternalLink className="w-5 h-5 mr-2 text-emerald-500" />
+              <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700">
+                <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center">
+                  <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-emerald-500" />
                   主要推薦來源
                 </h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
                   過去 {period} 天的流量來源
                 </p>
               </div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 {data.analytics.topReferrers.length === 0 ? (
-                  <div className="text-slate-500 dark:text-slate-400 text-center py-8 bg-slate-50 dark:bg-slate-900 rounded-lg">
-                    <ExternalLink className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    暫無推薦來源資料
+                  <div className="text-slate-500 dark:text-slate-400 text-center py-6 sm:py-8 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                    <ExternalLink className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 opacity-50" />
+                    <span className="text-sm">暫無推薦來源資料</span>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3 max-h-64 sm:max-h-80 overflow-y-auto scrollbar-hide">
                     {data.analytics.topReferrers.map((referrer, index) => (
                       <div 
                         key={index}
-                        className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        className="flex items-center justify-between p-2 sm:p-3 bg-slate-50 dark:bg-slate-900 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                       >
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
                           <div 
-                            className="w-3 h-3 rounded-full" 
+                            className="w-2 h-2 sm:w-3 sm:h-3 rounded-full flex-shrink-0" 
                             style={{ backgroundColor: COLORS[index % COLORS.length] }}
                           />
-                          <span className="font-medium text-slate-700 dark:text-slate-300">
+                          <span className="font-medium text-slate-700 dark:text-slate-300 text-sm sm:text-base truncate">
                             {referrer.domain || '直接訪問'}
                           </span>
                         </div>
-                        <div className="text-right">
-                          <div className="font-semibold text-slate-800 dark:text-slate-200">
+                        <div className="text-right flex-shrink-0 ml-2">
+                          <div className="font-semibold text-slate-800 dark:text-slate-200 text-sm sm:text-base">
                             {formatNumber(referrer.count)}
                           </div>
                           <div className="text-xs text-slate-500">
