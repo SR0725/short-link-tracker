@@ -122,6 +122,22 @@ export async function GET(
       .slice(0, 10)
       .map(([city, count]) => ({ city, count }))
 
+    // Get hourly distribution (0-23 hours)
+    const hourlyCounts: { [key: number]: number } = {}
+    clicks.forEach(click => {
+      const hour = click.timestamp.getHours()
+      hourlyCounts[hour] = (hourlyCounts[hour] || 0) + 1
+    })
+
+    // Fill in all 24 hours with 0 if no clicks
+    const hourlyStats = []
+    for (let hour = 0; hour < 24; hour++) {
+      hourlyStats.push({
+        hour,
+        count: hourlyCounts[hour] || 0
+      })
+    }
+
     return NextResponse.json({
       link: {
         id: link.id,
@@ -137,6 +153,7 @@ export async function GET(
         deviceStats,
         countryStats,
         cityStats,
+        hourlyStats,
         totalClicksInPeriod: clicks.length
       }
     })

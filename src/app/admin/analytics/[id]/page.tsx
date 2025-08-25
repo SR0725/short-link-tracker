@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Download, ExternalLink, TrendingUp, Globe, Calendar, Eye, MousePointer, Timer } from 'lucide-react'
+import { ArrowLeft, Download, ExternalLink, TrendingUp, Globe, Calendar, Eye, MousePointer, Timer, Clock } from 'lucide-react'
 import { toast } from 'sonner'
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts'
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps'
@@ -28,6 +28,7 @@ interface Analytics {
   deviceStats: { device: string; count: number }[]
   countryStats: { country: string; count: number }[]
   cityStats: { city: string; count: number }[]
+  hourlyStats: { hour: number; count: number }[]
   totalClicksInPeriod: number
 }
 
@@ -651,10 +652,158 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           </CardContent>
         </motion.div>
 
+        {/* Enhanced Hourly Activity Analysis */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.45 }}
+          className="bg-white border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+        >
+          <div className="p-4 sm:p-6 lg:p-8 border-b-2 border-gray-200">
+            <h3 className="text-xl sm:text-2xl font-bold text-black flex items-center">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center mr-2 sm:mr-3">
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              </div>
+              時段分析
+            </h3>
+            <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
+              24小時點擊活動分佈
+            </p>
+          </div>
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <div className="h-48 xs:h-56 sm:h-64 lg:h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart 
+                  data={data?.analytics.hourlyStats?.map(item => ({
+                    hour: item.hour,
+                    count: item.count,
+                    hourLabel: `${item.hour.toString().padStart(2, '0')}:00`
+                  })) || []} 
+                  margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
+                >
+                  <defs>
+                    <linearGradient id="colorHourly" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                  <XAxis 
+                    dataKey="hour" 
+                    tickFormatter={(value) => `${value.toString().padStart(2, '0')}:00`}
+                    className="text-slate-600 dark:text-slate-400"
+                    fontSize={11}
+                    interval={typeof window !== 'undefined' && window.innerWidth < 640 ? 3 : 1}
+                  />
+                  <YAxis 
+                    className="text-slate-600 dark:text-slate-400" 
+                    fontSize={12}
+                    width={30}
+                  />
+                  <Tooltip 
+                    labelFormatter={(value) => `${value.toString().padStart(2, '0')}:00 - ${(parseInt(value) + 1).toString().padStart(2, '0')}:00`}
+                    formatter={(value) => [`${value} 次點擊`, '點擊數']}
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                      fontSize: '14px'
+                    }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="count" 
+                    stroke="#f59e0b" 
+                    strokeWidth={2}
+                    fill="url(#colorHourly)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            
+            {/* Hour Analysis Insights */}
+            {data?.analytics.hourlyStats && data.analytics.hourlyStats.length > 0 && (
+              <div className="mt-4 sm:mt-6 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                {(() => {
+                  const stats = data.analytics.hourlyStats
+                  const maxHour = stats.reduce((max, current) => current.count > max.count ? current : max, stats[0])
+                  const minHour = stats.reduce((min, current) => current.count < min.count ? current : min, stats[0])
+                  const totalHourlyClicks = stats.reduce((sum, item) => sum + item.count, 0)
+                  const averagePerHour = Math.round(totalHourlyClicks / 24)
+                  
+                  // 判斷活躍時段
+                  const getTimeSlot = (hour: number) => {
+                    if (hour >= 6 && hour < 12) return '早上'
+                    if (hour >= 12 && hour < 18) return '下午'
+                    if (hour >= 18 && hour < 24) return '晚上'
+                    return '深夜'
+                  }
+                  
+                  return (
+                    <>
+                      <div className="bg-amber-50 p-3 rounded-lg">
+                        <div className="text-xs text-amber-600 font-medium mb-1">最活躍時段</div>
+                        <div className="text-lg font-bold text-amber-800">
+                          {maxHour.hour.toString().padStart(2, '0')}:00
+                        </div>
+                        <div className="text-xs text-amber-600">
+                          {getTimeSlot(maxHour.hour)} • {formatNumber(maxHour.count)} 次
+                        </div>
+                      </div>
+                      
+                      <div className="bg-blue-50 p-3 rounded-lg">
+                        <div className="text-xs text-blue-600 font-medium mb-1">最少活動</div>
+                        <div className="text-lg font-bold text-blue-800">
+                          {minHour.hour.toString().padStart(2, '0')}:00
+                        </div>
+                        <div className="text-xs text-blue-600">
+                          {getTimeSlot(minHour.hour)} • {formatNumber(minHour.count)} 次
+                        </div>
+                      </div>
+                      
+                      <div className="bg-green-50 p-3 rounded-lg">
+                        <div className="text-xs text-green-600 font-medium mb-1">平均每小時</div>
+                        <div className="text-lg font-bold text-green-800">
+                          {formatNumber(averagePerHour)}
+                        </div>
+                        <div className="text-xs text-green-600">
+                          點擊數
+                        </div>
+                      </div>
+                      
+                      <div className="bg-purple-50 p-3 rounded-lg">
+                        <div className="text-xs text-purple-600 font-medium mb-1">活躍度</div>
+                        <div className="text-lg font-bold text-purple-800">
+                          {((maxHour.count / (minHour.count || 1)) * 100).toFixed(0)}%
+                        </div>
+                        <div className="text-xs text-purple-600">
+                          峰值差距
+                        </div>
+                      </div>
+                    </>
+                  )
+                })()}
+              </div>
+            )}
+            
+            {/* Time zone note */}
+            <div className="mt-4 sm:mt-6 p-3 bg-blue-50 rounded-lg">
+              <div className="flex items-start space-x-2">
+                <Clock className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                <div className="text-xs sm:text-sm text-blue-700">
+                  <span className="font-medium">時區說明：</span>
+                  所有時間均以用戶所在的時區為準，目前顯示為 {Intl.DateTimeFormat().resolvedOptions().timeZone} ({new Date().toLocaleTimeString('zh-TW', { timeZoneName: 'short' }).split(' ')[1]})，讓您更準確了解不同地區用戶的活動模式。
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.55 }}
           className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
         >
             {/* Enhanced Top Referrers */}
@@ -781,7 +930,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.65 }}
           className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6"
         >
             {/* Enhanced Country Distribution */}
@@ -884,7 +1033,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.7 }}
           className="text-center py-6 text-slate-500 dark:text-slate-400 text-sm"
         >
           <div className="flex items-center justify-center space-x-2">
