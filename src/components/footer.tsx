@@ -4,8 +4,10 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Link as LinkIcon, Coffee, AtSign, Globe, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/lib/i18n/context"
 
 export default function Footer() {
+  const { t, language } = useI18n()
   const [isHovered, setIsHovered] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
@@ -35,19 +37,19 @@ export default function Footer() {
       name: "Threads",
       url: "https://www.threads.com/@ray.realms",
       icon: AtSign,
-      description: "追蹤我的最新動態"
+      description: t.footerThreadsDescription
     },
     {
-      name: "個人網站",
+      name: language === 'zh-TW' ? "個人網站" : "Website",
       url: "https://ray-realms.com/",
       icon: Globe,
-      description: "探索更多專案"
+      description: language === 'zh-TW' ? "探索更多專案" : "Explore more projects"
     },
     {
       name: "BuyMeACoffee",
       url: "https://buymeacoffee.com/ray948787o",
       icon: Coffee,
-      description: "支持我的創作"
+      description: t.footerSponsorDescription
     }
   ]
 
@@ -77,7 +79,7 @@ export default function Footer() {
               className="absolute top-4 right-4 z-10 bg-black text-white px-3 py-2 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors duration-200 flex items-center space-x-2 shadow-lg"
             >
               <EyeOff className="w-4 h-4" />
-              <span>隱藏底部</span>
+              <span>{t.footerHideButton}</span>
             </motion.button>
           )}
         </AnimatePresence>
@@ -95,9 +97,9 @@ export default function Footer() {
                 <LinkIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-black">Ray 貓</h3>
+                <h3 className="text-lg font-bold text-black">{t.footerAuthor}</h3>
                 <p className="text-sm text-gray-600">
-                 這個網站的開發者，🚀 Vibe Coding 研究者 × 新創路上的 AI 工程師
+                 {t.footerDescription}
                 </p>
               </div>
             </div>
@@ -149,9 +151,9 @@ export default function Footer() {
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-2xl mb-4">
                   <LinkIcon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-black mb-2">稍等一下！</h3>
+                <h3 className="text-2xl font-bold text-black mb-2">{t.footerModalTitle}</h3>
                 <p className="text-gray-600">
-                  在隱藏底部之前，願意追蹤我的動態或支持我的創作嗎？
+                  {t.footerModalDescription}
                 </p>
               </div>
 
@@ -166,8 +168,8 @@ export default function Footer() {
                     <AtSign className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-black">追蹤 Threads</h4>
-                    <p className="text-sm text-gray-600">獲取最新動態與技術分享</p>
+                    <h4 className="font-semibold text-black">{language === 'zh-TW' ? '追蹤 Threads' : 'Follow on Threads'}</h4>
+                    <p className="text-sm text-gray-600">{t.footerThreadsDescription}</p>
                   </div>
                 </a>
 
@@ -181,8 +183,8 @@ export default function Footer() {
                     <Coffee className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-black">贊助咖啡</h4>
-                    <p className="text-sm text-gray-600">支持開源專案的持續開發</p>
+                    <h4 className="font-semibold text-black">{language === 'zh-TW' ? '贊助咖啡' : 'Buy Me Coffee'}</h4>
+                    <p className="text-sm text-gray-600">{t.footerSponsorDescription}</p>
                   </div>
                 </a>
               </div>
@@ -193,13 +195,13 @@ export default function Footer() {
                   variant="outline"
                   className="flex-1 rounded-full"
                 >
-                  取消
+                  {t.footerCancel}
                 </Button>
                 <Button
                   onClick={handleHideFooter}
                   className="flex-1 bg-black hover:bg-gray-800 text-white rounded-full"
                 >
-                  隱藏一個月
+                  {t.footerHideMonth}
                 </Button>
               </div>
             </motion.div>

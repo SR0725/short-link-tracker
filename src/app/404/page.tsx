@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { Home } from 'lucide-react'
+import { useI18n } from '@/lib/i18n/context'
+import { LanguageSwitcher } from '@/components/language-switcher'
 
 interface Settings {
   custom404Title: string
@@ -15,6 +17,7 @@ interface Settings {
 }
 
 export default function NotFoundPage() {
+  const { t, language } = useI18n()
   const [settings, setSettings] = useState<Settings>({
     custom404Title: '404',
     custom404Description: '您尋找的短連結不存在或可能已被移除。',
@@ -58,6 +61,11 @@ export default function NotFoundPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Language Switcher */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher size={48} />
+      </div>
+      
       <motion.section className="min-h-screen flex items-center justify-center relative overflow-hidden">
         <motion.div 
           className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100"
@@ -116,7 +124,7 @@ export default function NotFoundPage() {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="text-3xl md:text-4xl font-bold text-gray-600 mb-6"
             >
-              找不到短連結
+              {language === 'zh-TW' ? '找不到短連結' : 'Short Link Not Found'}
             </motion.h2>
           </motion.div>
 

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import QRCodeStyling from "qr-code-styling";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Download, Upload, Palette, Shapes, Copy, Fullscreen } from "lucide-react";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n/context";
 
 interface QRCodeGeneratorProps {
   url: string;
@@ -31,69 +32,12 @@ type ColorScheme = {
   accent?: string;
 };
 
-const colorSchemes: ColorScheme[] = [
-  {
-    id: "classic",
-    name: "經典黑白",
-    foreground: "#000000",
-    background: "#ffffff",
-  },
-  {
-    id: "blue",
-    name: "商務藍",
-    foreground: "#1e40af",
-    background: "#f0f9ff",
-    accent: "#3b82f6",
-  },
-  {
-    id: "green",
-    name: "自然綠",
-    foreground: "#166534",
-    background: "#f0fdf4",
-    accent: "#22c55e",
-  },
-  {
-    id: "purple",
-    name: "紫羅蘭",
-    foreground: "#7c3aed",
-    background: "#faf5ff",
-    accent: "#a855f7",
-  },
-  {
-    id: "red",
-    name: "活力紅",
-    foreground: "#dc2626",
-    background: "#fef2f2",
-    accent: "#ef4444",
-  },
-  {
-    id: "orange",
-    name: "橘色暖陽",
-    foreground: "#ea580c",
-    background: "#fff7ed",
-    accent: "#f97316",
-  },
-  {
-    id: "teal",
-    name: "青綠色",
-    foreground: "#0f766e",
-    background: "#f0fdfa",
-    accent: "#14b8a6",
-  },
-  {
-    id: "pink",
-    name: "粉紅色",
-    foreground: "#be185d",
-    background: "#fdf2f8",
-    accent: "#ec4899",
-  },
-];
-
 export function QRCodeGenerator({
   url,
   defaultStyle = "square",
   defaultColorScheme = "classic",
 }: QRCodeGeneratorProps) {
+  const { t, language } = useI18n();
   const [style, setStyle] = useState<QRStyle>(defaultStyle);
   const [colorScheme, setColorScheme] = useState(defaultColorScheme);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
@@ -101,6 +45,64 @@ export function QRCodeGenerator({
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const qrCode = useRef<QRCodeStyling | null>(null);
+
+  const colorSchemes: ColorScheme[] = [
+    {
+      id: "classic",
+      name: language === 'zh-TW' ? "經典黑白" : "Classic Black & White",
+      foreground: "#000000",
+      background: "#ffffff",
+    },
+    {
+      id: "blue",
+      name: language === 'zh-TW' ? "商務藍" : "Business Blue",
+      foreground: "#1e40af",
+      background: "#f0f9ff",
+      accent: "#3b82f6",
+    },
+    {
+      id: "green",
+      name: language === 'zh-TW' ? "自然綠" : "Natural Green",
+      foreground: "#166534",
+      background: "#f0fdf4",
+      accent: "#22c55e",
+    },
+    {
+      id: "purple",
+      name: language === 'zh-TW' ? "紫羅蘭" : "Violet",
+      foreground: "#7c3aed",
+      background: "#faf5ff",
+      accent: "#a855f7",
+    },
+    {
+      id: "red",
+      name: language === 'zh-TW' ? "活力紅" : "Vibrant Red",
+      foreground: "#dc2626",
+      background: "#fef2f2",
+      accent: "#ef4444",
+    },
+    {
+      id: "orange",
+      name: language === 'zh-TW' ? "橘色暖陽" : "Orange Warmth",
+      foreground: "#ea580c",
+      background: "#fff7ed",
+      accent: "#f97316",
+    },
+    {
+      id: "teal",
+      name: language === 'zh-TW' ? "青綠色" : "Teal",
+      foreground: "#0f766e",
+      background: "#f0fdfa",
+      accent: "#14b8a6",
+    },
+    {
+      id: "pink",
+      name: language === 'zh-TW' ? "粉紅色" : "Pink",
+      foreground: "#be185d",
+      background: "#fdf2f8",
+      accent: "#ec4899",
+    },
+  ];
 
   // Initialize QR Code
   useEffect(() => {
@@ -112,7 +114,7 @@ export function QRCodeGenerator({
         data: url,
       });
     }
-  }, []);
+  }, [url]);
 
   // Load default settings
   useEffect(() => {
@@ -147,14 +149,14 @@ export function QRCodeGenerator({
       // Append new QR code
       qrCode.current.append(qrCodeRef.current);
     }
-  }, [url, style, colorScheme, logoUrl]);
+  }, [url, style, colorScheme, logoUrl, colorSchemes]);
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       // 檢查檔案大小（限制 2MB）
       if (file.size > 2 * 1024 * 1024) {
-        toast.error("檔案大小不得超過 2MB");
+        toast.error(t.qrFileSizeError);
         return;
       }
 
@@ -162,7 +164,7 @@ export function QRCodeGenerator({
       const reader = new FileReader();
       reader.onload = (e) => {
         setLogoUrl(e.target?.result as string);
-        toast.success("Logo 已上傳");
+        toast.success(t.qrLogoUploaded);
       };
       reader.readAsDataURL(file);
     }
@@ -170,7 +172,7 @@ export function QRCodeGenerator({
 
   const downloadQR = (format: "png" | "svg" = "png") => {
     if (!qrCode.current) {
-      toast.error("QR Code 尚未生成");
+      toast.error(t.qrNotGenerated);
       return;
     }
 
@@ -180,28 +182,27 @@ export function QRCodeGenerator({
           name: `qrcode-${Date.now()}`,
           extension: "png",
         });
-        toast.success("QR Code 已下載");
+        toast.success(t.qrDownloaded);
       } else if (format === "svg") {
         qrCode.current.download({
           name: `qrcode-${Date.now()}`,
           extension: "svg",
         });
-        toast.success("QR Code 已下載");
+        toast.success(t.qrDownloaded);
       }
     } catch (error) {
       console.error("Download failed:", error);
-      toast.error("下載失敗");
+      toast.error(t.qrDownloadFailed);
     }
   };
 
   const copyQR = async () => {
     if (!qrCode.current) {
-      toast.error("QR Code 尚未生成");
+      toast.error(t.qrNotGenerated);
       return;
     }
 
     try {
-      const canvas = document.createElement("canvas");
       await qrCode.current.getRawData("png").then((data) => {
         if (data) {
           // Convert Buffer to Blob if needed
@@ -217,16 +218,16 @@ export function QRCodeGenerator({
           navigator.clipboard
             .write([item])
             .then(() => {
-              toast.success("QR Code 已複製到剪貼簿");
+              toast.success(t.qrCopied);
             })
             .catch(() => {
-              toast.error("複製失敗，請嘗試下載");
+              toast.error(t.qrCopyFailed);
             });
         }
       });
     } catch (error) {
       console.error("Copy failed:", error);
-      toast.error("複製失敗，請嘗試下載");
+      toast.error(t.qrCopyFailed);
     }
   };
 
@@ -333,7 +334,7 @@ export function QRCodeGenerator({
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               <Shapes className="w-4 h-4" />
-              QR Code 樣式
+              {t.qrStyleSelect}
             </Label>
             <Select
               value={style}
@@ -343,9 +344,9 @@ export function QRCodeGenerator({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="square">方形（傳統）</SelectItem>
-                <SelectItem value="rounded">圓角方形</SelectItem>
-                <SelectItem value="dots">圓點樣式</SelectItem>
+                <SelectItem value="square">{t.qrSquareStyle}</SelectItem>
+                <SelectItem value="rounded">{t.qrRoundedStyle}</SelectItem>
+                <SelectItem value="dots">{t.qrDotsStyle}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -354,7 +355,7 @@ export function QRCodeGenerator({
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               <Palette className="w-4 h-4" />
-              QR Code 色系
+              {t.qrColorSelect}
             </Label>
             <Select value={colorScheme} onValueChange={setColorScheme}>
               <SelectTrigger className="w-full">
@@ -378,9 +379,10 @@ export function QRCodeGenerator({
 
           {/* Logo 上傳 */}
           <div className="space-y-2 col-span-2 md:col-span-1">
-            <Label>
+            <Label className="flex items-center gap-2">
               <Fullscreen className="w-4 h-4" />
-              中央 Logo（選用）</Label>
+              {t.qrLogoUpload}
+            </Label>
             <div className="flex gap-2">
               <Input
                 type="file"
@@ -396,7 +398,7 @@ export function QRCodeGenerator({
                 className="flex-1"
               >
                 <Upload className="w-4 h-4 mr-2" />
-                上傳 Logo
+                {t.qrUploadLogo}
               </Button>
               {logoUrl && (
                 <Button
@@ -408,10 +410,10 @@ export function QRCodeGenerator({
                     if (fileInputRef.current) {
                       fileInputRef.current.value = "";
                     }
-                    toast.success("Logo 已移除");
+                    toast.success(t.qrLogoRemoved);
                   }}
                 >
-                  移除
+                  {t.qrRemoveLogo}
                 </Button>
               )}
             </div>
@@ -429,7 +431,7 @@ export function QRCodeGenerator({
 
         {/* Style and Color Preview Grid */}
         <div className="space-y-3 hidden md:block">
-          <Label>預覽所有組合</Label>
+          <Label>{t.qrPreviewAll}</Label>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 p-4 border rounded-lg bg-gray-50">
             {colorSchemes.map((scheme) => (
               <div key={scheme.id} className="space-y-2">
@@ -452,10 +454,10 @@ export function QRCodeGenerator({
                         }}
                         title={`${scheme.name} - ${
                           styleType === "square"
-                            ? "方形"
+                            ? language === 'zh-TW' ? "方形" : "Square"
                             : styleType === "rounded"
-                            ? "圓角"
-                            : "圓點"
+                            ? language === 'zh-TW' ? "圓角" : "Rounded"
+                            : language === 'zh-TW' ? "圓點" : "Dots"
                         }`}
                       >
                         <QRPreview
@@ -476,11 +478,11 @@ export function QRCodeGenerator({
         <div className="flex gap-2">
           <Button onClick={copyQR} variant="outline" className="flex-1">
             <Copy className="w-4 h-4 mr-2" />
-            複製
+            {t.qrCopy}
           </Button>
           <Button onClick={() => downloadQR("png")} className="flex-1">
             <Download className="w-4 h-4 mr-2" />
-            PNG
+            {t.qrDownloadPng}
           </Button>
           <Button
             onClick={() => downloadQR("svg")}
@@ -488,12 +490,12 @@ export function QRCodeGenerator({
             className="flex-1"
           >
             <Download className="w-4 h-4 mr-2" />
-            SVG
+            {t.qrDownloadSvg}
           </Button>
         </div>
 
         <div className="text-sm text-gray-500 text-center">
-          掃描此 QR Code 將跳轉到: {url}
+          {t.qrScanInfo}: {url}
         </div>
       </CardContent>
     </Card>

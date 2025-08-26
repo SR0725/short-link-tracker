@@ -10,8 +10,11 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { Link as LinkIcon } from 'lucide-react'
+import { useI18n } from '@/lib/i18n/context'
+import { LanguageSwitcher } from '@/components/language-switcher'
 
 export default function LoginPage() {
+  const { t } = useI18n()
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -55,18 +58,18 @@ export default function LoginPage() {
 
       if (response.ok) {
         console.log('Login successful, redirecting to /admin')
-        toast.success('登入成功')
+        toast.success(t.loginSuccess)
         // Add a small delay to ensure cookie is set
         setTimeout(() => {
           window.location.href = '/admin'
         }, 100)
       } else {
-        const errorMsg = data.error === 'Invalid password' ? '密碼錯誤' : '網路錯誤，請重試'
+        const errorMsg = data.error === 'Invalid password' ? t.loginErrorPassword : t.loginErrorNetwork
         setError(errorMsg)
         toast.error(errorMsg)
       }
     } catch {
-      const errorMsg = '網路錯誤，請重試'
+      const errorMsg = t.loginErrorNetwork
       setError(errorMsg)
       toast.error(errorMsg)
     } finally {
@@ -76,6 +79,11 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Language Switcher */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher size={48} />
+      </div>
+      
       {/* Background with gradient animation */}
       <motion.div 
         className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100"
@@ -120,9 +128,9 @@ export default function LoginPage() {
           >
             <Card className="bg-white shadow-2xl border-0 rounded-3xl overflow-hidden">
               <CardHeader className="text-center pb-2 pt-8">
-                <CardTitle className="text-4xl font-black text-black mb-2">管理員登入</CardTitle>
+                <CardTitle className="text-4xl font-black text-black mb-2">{t.loginTitle}</CardTitle>
                 <CardDescription className="text-lg text-gray-600">
-                  請輸入密碼以進入管理後台
+                  {t.loginDescription}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-8 pt-6">
@@ -133,7 +141,7 @@ export default function LoginPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.6, duration: 0.4 }}
                   >
-                    <Label htmlFor="password" className="text-base font-semibold text-black">密碼</Label>
+                    <Label htmlFor="password" className="text-base font-semibold text-black">{t.loginPassword}</Label>
                     <Input
                       id="password"
                       type="password"
@@ -162,7 +170,7 @@ export default function LoginPage() {
                       htmlFor="remember-me" 
                       className="text-base font-medium text-gray-700 cursor-pointer"
                     >
-                      記住我 1 年
+                      {t.loginRememberMe}
                     </Label>
                   </motion.div>
 
@@ -193,7 +201,7 @@ export default function LoginPage() {
                         animate={isLoading ? { scale: [1, 1.05, 1] } : {}}
                         transition={{ duration: 1, repeat: isLoading ? Infinity : 0 }}
                       >
-                        {isLoading ? '登入中...' : '登入'}
+                        {isLoading ? t.loginLoading : t.loginButton}
                       </motion.div>
                     </Button>
                   </motion.div>

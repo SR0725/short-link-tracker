@@ -1,5 +1,7 @@
 # 短網址追蹤器
 
+[![English](https://img.shields.io/badge/README-English-blue)](./README.en.md) | [![繁體中文](https://img.shields.io/badge/README-繁體中文-red)](./README.md)
+
 使用 Next.js 15 構建的完整短網址服務，具備網址縮短、點擊追蹤和全面的數據分析功能。
 
 ## 功能特色

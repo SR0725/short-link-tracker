@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Download, ExternalLink, TrendingUp, Globe, Calendar, Eye, MousePointer, Timer, Clock } from 'lucide-react'
 import { toast } from 'sonner'
+import { useI18n } from '@/lib/i18n/context'
+import { LanguageSwitcher } from '@/components/language-switcher'
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts'
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps'
 import { scaleSequential } from 'd3-scale'
@@ -92,6 +94,7 @@ const formatNumber = (num: number): string => {
 }
 
 export default function AnalyticsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { t, language } = useI18n()
   const [data, setData] = useState<AnalyticsData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [period, setPeriod] = useState(7)
@@ -159,13 +162,13 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
         a.click()
         window.URL.revokeObjectURL(url)
         document.body.removeChild(a)
-        toast.success('CSV 檔案已下載')
+        toast.success(language === 'zh-TW' ? 'CSV 檔案已下載' : 'CSV file downloaded')
       } else {
-        toast.error('下載失敗')
+        toast.error(language === 'zh-TW' ? '下載失敗' : 'Download failed')
       }
     } catch (error) {
       console.error('Export failed:', error)
-      toast.error('下載時發生錯誤')
+      toast.error(language === 'zh-TW' ? '下載時發生錯誤' : 'Error occurred during download')
     }
   }
 
@@ -184,7 +187,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           >
             <TrendingUp className="w-8 h-8 text-white" />
           </motion.div>
-          <p className="text-xl font-medium text-black">載入分析資料中...</p>
+          <p className="text-xl font-medium text-black">{t.analyticsLoadingData}</p>
         </motion.div>
       </div>
     )
@@ -212,7 +215,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           animate={{ opacity: 1, scale: 1 }}
           className="text-center p-8 bg-white rounded-2xl shadow-xl border-2 border-gray-200"
         >
-          <div className="text-black text-xl font-semibold">找不到分析數據</div>
+          <div className="text-black text-xl font-semibold">{t.analyticsNoAnalyticsData}</div>
         </motion.div>
       </div>
     )
@@ -232,6 +235,11 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Language Switcher */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher size={48} />
+      </div>
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 space-y-6 sm:space-y-8 lg:space-y-12">
         {/* Enhanced Header */}
         <motion.div 
@@ -249,8 +257,8 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                 className="border-gray-300 hover:bg-gray-50 hover:border-gray-400 self-start sm:self-center"
               >
                 <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">返回儀表板</span>
-                <span className="sm:hidden">返回</span>
+                <span className="hidden sm:inline">{t.analyticsReturnDashboard}</span>
+                <span className="sm:hidden">{t.analyticsReturn}</span>
               </Button>
               
               <div className="flex items-start sm:items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
@@ -259,7 +267,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                 </div>
                 <div className="min-w-0 flex-1">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-black tracking-tight">
-                    分析中心
+                    {t.analyticsTitle}
                   </h1>
                   <div className="mt-1 sm:mt-2 space-y-1">
                     <p className="text-sm sm:text-base lg:text-lg text-gray-700 font-medium break-all">
@@ -288,8 +296,8 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                   rel="noopener noreferrer"
                 >
                   <ExternalLink className="w-4 h-4 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">訪問連結</span>
-                  <span className="sm:hidden">訪問</span>
+                  <span className="hidden sm:inline">{t.analyticsVisitLink}</span>
+                  <span className="sm:hidden">{t.analyticsVisit}</span>
                 </a>
               </Button>
               <Button 
@@ -298,7 +306,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                 className="bg-black hover:bg-gray-800 text-white text-sm"
               >
                 <Download className="w-4 h-4 mr-1 sm:mr-2" />
-                匯出 CSV
+                {t.analyticsExportCsv}
               </Button>
             </div>
           </div>
@@ -314,7 +322,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-3 sm:pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700">總點擊數</CardTitle>
+                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700">{t.analyticsTotalClicks}</CardTitle>
                 <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center">
                   <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
@@ -328,7 +336,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
           <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-3 sm:pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700 leading-tight">期間點擊 ({data.analytics.period})</CardTitle>
+                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700 leading-tight">{t.analyticsPeriodClicksWithPeriod} ({data.analytics.period})</CardTitle>
                 <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center">
                   <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
@@ -336,14 +344,14 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
             </CardHeader>
             <CardContent>
               <div className="text-2xl sm:text-3xl font-black text-black">{formatNumber(data.analytics.totalClicksInPeriod)}</div>
-              <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2">平均每日: {averageClicksPerDay}</div>
+              <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2">{t.analyticsAverageDaily}: {averageClicksPerDay}</div>
             </CardContent>
           </Card>
           
           <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-3 sm:pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700">覆蓋國家</CardTitle>
+                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700">{t.analyticsCoveredCountries}</CardTitle>
                 <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center">
                   <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
@@ -351,14 +359,14 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
             </CardHeader>
             <CardContent>
               <div className="text-2xl sm:text-3xl font-black text-black">{totalUniqueCountries}</div>
-              <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2 leading-tight">主要來源: {topCountry}</div>
+              <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2 leading-tight">{t.analyticsMainSource}: {topCountry}</div>
             </CardContent>
           </Card>
           
           <Card className="bg-white border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-3 sm:pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700">建立時間</CardTitle>
+                <CardTitle className="text-sm sm:text-base font-semibold text-gray-700">{t.analyticsCreatedAt}</CardTitle>
                 <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center">
                   <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
@@ -366,9 +374,9 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
             </CardHeader>
             <CardContent>
               <div className="text-lg sm:text-2xl font-black text-black leading-tight">
-                {new Date(data.link.createdAt).toLocaleDateString('zh-TW')}
+                {new Date(data.link.createdAt).toLocaleDateString(language === 'zh-TW' ? 'zh-TW' : 'en-US')}
               </div>
-              <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2 leading-tight">主要裝置: {topDevice}</div>
+              <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2 leading-tight">{t.analyticsMainDevice}: {topDevice}</div>
             </CardContent>
           </Card>
         </motion.div>
@@ -382,8 +390,8 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
         >
           <div className="flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
             <div>
-              <h3 className="text-xl sm:text-2xl font-bold text-black">時間範圍</h3>
-              <p className="text-sm sm:text-base text-gray-600 mt-1">選擇要查看的分析時段</p>
+              <h3 className="text-xl sm:text-2xl font-bold text-black">{t.analyticsTimeRangeTitle}</h3>
+              <p className="text-sm sm:text-base text-gray-600 mt-1">{t.analyticsTimeRangeDesc}</p>
             </div>
             <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-3">
               {[7, 30, 90].map((days) => (
@@ -397,7 +405,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                     'border-gray-300 hover:bg-gray-50 hover:border-gray-400 text-gray-700'
                   }`}
                 >
-                  {days} 天
+                  {days} {t.analyticsDays}
                 </Button>
               ))}
             </div>
@@ -416,11 +424,11 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
               <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center mr-2 sm:mr-3">
                 <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              全球點擊分佈
+              {t.analyticsGlobalDistTitle}
             </h3>
             <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
-              <span className="hidden sm:inline">顏色越深表示該地區的點擊量越高，滑鼠移到國家上查看詳細資訊</span>
-              <span className="sm:hidden">點擊國家查看詳細資訊</span>
+              <span className="hidden sm:inline">{t.analyticsGlobalDistDesc}</span>
+              <span className="sm:hidden">{t.analyticsGlobalDistMobile}</span>
             </p>
           </div>
           <div className="p-2 sm:p-4 lg:p-6 relative">
@@ -504,11 +512,11 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                     {tooltipContent.name}
                   </div>
                   <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">
-                    點擊數: <span className="font-medium text-indigo-600 dark:text-indigo-400">{formatNumber(tooltipContent.count)}</span>
+                    {t.analyticsClicksTooltipLabel}: <span className="font-medium text-indigo-600 dark:text-indigo-400">{formatNumber(tooltipContent.count)}</span>
                   </div>
                   {tooltipContent.count > 0 && (
                     <div className="text-xs text-slate-500 dark:text-slate-500 mt-1 whitespace-nowrap">
-                      佔總數: {((tooltipContent.count / data.analytics.totalClicksInPeriod) * 100).toFixed(1)}%
+                      {t.analyticsPercentOfTotal}: {((tooltipContent.count / data.analytics.totalClicksInPeriod) * 100).toFixed(1)}%
                     </div>
                   )}
                 </motion.div>
@@ -519,7 +527,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
             <div className="mt-3 sm:mt-4 lg:mt-6 space-y-2 sm:space-y-3">
               <div className="text-center">
                 <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
-                  點擊數量分佈 {maxCountryClicks > 100 && <span className="text-xs hidden sm:inline">(對數比例)</span>}
+                  {t.analyticsClicksDistribution} {maxCountryClicks > 100 && <span className="text-xs hidden sm:inline">({t.analyticsLogScale})</span>}
                 </span>
               </div>
               <div className="flex items-center justify-center space-x-1 sm:space-x-2 px-2 overflow-x-auto scrollbar-hide">
@@ -596,10 +604,10 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
               <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center mr-2 sm:mr-3">
                 <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              點擊趨勢
+              {t.analyticsClickTrendsTitle}
             </h3>
             <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
-              過去 {period} 天的每日點擊分析
+              {t.analyticsClickTrendsDesc} {period} {t.analyticsDailyAnalysis}
             </p>
           </div>
           <CardContent className="p-3 sm:p-4 lg:p-6">
@@ -619,7 +627,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                       const date = new Date(value)
                       return typeof window !== 'undefined' && window.innerWidth < 640 ?
                         `${date.getMonth() + 1}/${date.getDate()}` :
-                        date.toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' })
+                        date.toLocaleDateString(language === 'zh-TW' ? 'zh-TW' : 'en-US', { month: 'short', day: 'numeric' })
                     }}
                     className="text-slate-600 dark:text-slate-400"
                     fontSize={12}
@@ -631,8 +639,8 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                     width={30}
                   />
                   <Tooltip 
-                    labelFormatter={(value) => new Date(value).toLocaleDateString('zh-TW')}
-                    formatter={(value) => [`${value} 次點擊`, '點擊數']}
+                    labelFormatter={(value) => new Date(value).toLocaleDateString(language === 'zh-TW' ? 'zh-TW' : 'en-US')}
+                    formatter={(value) => [`${value} ${t.analyticsClicksTooltipText}`, t.analyticsClicksTooltipLabel]}
                     contentStyle={{
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
                       border: '1px solid #e2e8f0',
@@ -666,10 +674,10 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
               <div className="w-7 h-7 sm:w-8 sm:h-8 bg-black rounded-lg sm:rounded-xl flex items-center justify-center mr-2 sm:mr-3">
                 <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              時段分析
+              {t.analyticsHourlyTitle}
             </h3>
             <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
-              24小時點擊活動分佈
+              {t.analyticsHourlyDesc}
             </p>
           </div>
           <CardContent className="p-3 sm:p-4 lg:p-6">
@@ -704,7 +712,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                   />
                   <Tooltip 
                     labelFormatter={(value) => `${value.toString().padStart(2, '0')}:00 - ${(parseInt(value) + 1).toString().padStart(2, '0')}:00`}
-                    formatter={(value) => [`${value} 次點擊`, '點擊數']}
+                    formatter={(value) => [`${value} ${t.analyticsClicksTooltipText}`, t.analyticsClicksTooltipLabel]}
                     contentStyle={{
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
                       border: '1px solid #e2e8f0',
@@ -736,51 +744,58 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                   
                   // 判斷活躍時段
                   const getTimeSlot = (hour: number) => {
-                    if (hour >= 6 && hour < 12) return '早上'
-                    if (hour >= 12 && hour < 18) return '下午'
-                    if (hour >= 18 && hour < 24) return '晚上'
-                    return '深夜'
+                    if (language === 'zh-TW') {
+                      if (hour >= 6 && hour < 12) return '早上'
+                      if (hour >= 12 && hour < 18) return '下午'
+                      if (hour >= 18 && hour < 24) return '晚上'
+                      return '深夜'
+                    } else {
+                      if (hour >= 6 && hour < 12) return 'Morning'
+                      if (hour >= 12 && hour < 18) return 'Afternoon'
+                      if (hour >= 18 && hour < 24) return 'Evening'
+                      return 'Late Night'
+                    }
                   }
                   
                   return (
                     <>
                       <div className="bg-amber-50 p-3 rounded-lg">
-                        <div className="text-xs text-amber-600 font-medium mb-1">最活躍時段</div>
+                        <div className="text-xs text-amber-600 font-medium mb-1">{t.analyticsMostActiveTime}</div>
                         <div className="text-lg font-bold text-amber-800">
                           {maxHour.hour.toString().padStart(2, '0')}:00
                         </div>
                         <div className="text-xs text-amber-600">
-                          {getTimeSlot(maxHour.hour)} • {formatNumber(maxHour.count)} 次
+                          {getTimeSlot(maxHour.hour)} • {formatNumber(maxHour.count)} {t.analyticsClicksUnit}
                         </div>
                       </div>
                       
                       <div className="bg-blue-50 p-3 rounded-lg">
-                        <div className="text-xs text-blue-600 font-medium mb-1">最少活動</div>
+                        <div className="text-xs text-blue-600 font-medium mb-1">{t.analyticsLeastActiveTime}</div>
                         <div className="text-lg font-bold text-blue-800">
                           {minHour.hour.toString().padStart(2, '0')}:00
                         </div>
                         <div className="text-xs text-blue-600">
-                          {getTimeSlot(minHour.hour)} • {formatNumber(minHour.count)} 次
+                          {getTimeSlot(minHour.hour)} • {formatNumber(minHour.count)} {t.analyticsClicksUnit}
                         </div>
                       </div>
                       
                       <div className="bg-green-50 p-3 rounded-lg">
-                        <div className="text-xs text-green-600 font-medium mb-1">平均每小時</div>
+                        <div className="text-xs text-green-600 font-medium mb-1">{t.analyticsAverageHourly}</div>
                         <div className="text-lg font-bold text-green-800">
                           {formatNumber(averagePerHour)}
                         </div>
                         <div className="text-xs text-green-600">
-                          點擊數
+                          {t.analyticsClicksTooltipLabel}
                         </div>
                       </div>
                       
                       <div className="bg-purple-50 p-3 rounded-lg">
-                        <div className="text-xs text-purple-600 font-medium mb-1">活躍度</div>
+                        <div className="text-xs text-purple-600 font-medium mb-1">{t.analyticsActivityRate}</div>
                         <div className="text-lg font-bold text-purple-800">
                           {((maxHour.count / (minHour.count || 1)) * 100).toFixed(0)}%
                         </div>
                         <div className="text-xs text-purple-600">
-                          峰值差距
+                          {t.analyticsPeakGap}
                         </div>
                       </div>
                     </>
@@ -794,8 +809,8 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
               <div className="flex items-start space-x-2">
                 <Clock className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                 <div className="text-xs sm:text-sm text-blue-700">
-                  <span className="font-medium">時區說明：</span>
-                  所有時間均以用戶所在的時區為準，目前顯示為 {Intl.DateTimeFormat().resolvedOptions().timeZone} ({new Date().toLocaleTimeString('zh-TW', { timeZoneName: 'short' }).split(' ')[1]})，讓您更準確了解不同地區用戶的活動模式。
+                  <span className="font-medium">{t.analyticsTimezoneTitle}</span>
+                  {t.analyticsTimezoneDesc} {Intl.DateTimeFormat().resolvedOptions().timeZone} ({new Date().toLocaleTimeString(language === 'zh-TW' ? 'zh-TW' : 'en-US', { timeZoneName: 'short' }).split(' ')[1]})，{t.analyticsTimezoneDesc2}
                 </div>
               </div>
             </div>
@@ -813,17 +828,17 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
               <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700">
                 <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center">
                   <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-emerald-500" />
-                  主要推薦來源
+                  {t.analyticsReferrersTitle}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-                  過去 {period} 天的流量來源
+                  {t.analyticsReferrersDesc} {period} {t.analyticsReferrersDesc2}
                 </p>
               </div>
               <div className="p-4 sm:p-6">
                 {data.analytics.topReferrers.length === 0 ? (
                   <div className="text-slate-500 dark:text-slate-400 text-center py-6 sm:py-8 bg-slate-50 dark:bg-slate-900 rounded-lg">
                     <ExternalLink className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 opacity-50" />
-                    <span className="text-sm">暫無推薦來源資料</span>
+                    <span className="text-sm">{t.analyticsNoReferrerData}</span>
                   </div>
                 ) : (
                   <div className="space-y-2 sm:space-y-3 max-h-64 sm:max-h-80 overflow-y-auto scrollbar-hide">
@@ -838,7 +853,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                             style={{ backgroundColor: COLORS[index % COLORS.length] }}
                           />
                           <span className="font-medium text-slate-700 dark:text-slate-300 text-sm sm:text-base truncate">
-                            {referrer.domain || '直接訪問'}
+                            {referrer.domain || t.analyticsDirectAccess}
                           </span>
                         </div>
                         <div className="text-right flex-shrink-0 ml-2">
@@ -861,17 +876,17 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
               <div className="p-6 border-b border-slate-200 dark:border-slate-700">
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center">
                   <MousePointer className="w-5 h-5 mr-2 text-purple-500" />
-                  裝置分佈
+                  {t.analyticsDeviceTitle}
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                  用戶使用的裝置類型
+                  {t.analyticsDeviceDesc}
                 </p>
               </div>
               <div className="p-6">
                 {data.analytics.deviceStats.length === 0 ? (
                   <div className="text-slate-500 dark:text-slate-400 text-center py-8 bg-slate-50 dark:bg-slate-900 rounded-lg">
                     <MousePointer className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    暫無裝置資料
+                    {t.analyticsNoDeviceData}
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-4">
@@ -893,7 +908,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                             ))}
                           </Pie>
                           <Tooltip 
-                            formatter={(value, name) => [`${value} 次點擊`, name]}
+                            formatter={(value, name) => [`${value} ${t.analyticsClicksTooltipText}`, name]}
                             contentStyle={{
                               backgroundColor: 'rgba(255, 255, 255, 0.95)',
                               border: '1px solid #e2e8f0',
@@ -940,17 +955,17 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
               <div className="p-6 border-b border-slate-200 dark:border-slate-700">
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center">
                   <Globe className="w-5 h-5 mr-2 text-blue-500" />
-                  國家分佈
+                  {t.analyticsCountryTitle}
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                  點擊量的地理分佈
+                  {t.analyticsCountryDesc}
                 </p>
               </div>
               <div className="p-4 sm:p-6 max-h-60 sm:max-h-80 overflow-y-auto">
                 {data.analytics.countryStats.length === 0 ? (
                   <div className="text-slate-500 dark:text-slate-400 text-center py-8 bg-slate-50 dark:bg-slate-900 rounded-lg">
                     <Globe className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    暫無國家資料
+                    {t.analyticsNoCountryData}
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -988,17 +1003,17 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
               <div className="p-6 border-b border-slate-200 dark:border-slate-700">
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center">
                   <Timer className="w-5 h-5 mr-2 text-orange-500" />
-                  城市分佈
+                  {t.analyticsCityTitle}
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                  點擊來源的主要城市
+                  {t.analyticsCityDesc}
                 </p>
               </div>
               <div className="p-4 sm:p-6 max-h-60 sm:max-h-80 overflow-y-auto">
                 {data.analytics.cityStats.length === 0 ? (
                   <div className="text-slate-500 dark:text-slate-400 text-center py-8 bg-slate-50 dark:bg-slate-900 rounded-lg">
                     <Timer className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    暫無城市資料
+                    {t.analyticsNoCityData}
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -1040,7 +1055,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
         >
           <div className="flex items-center justify-center space-x-2">
             <Eye className="w-4 h-4" />
-            <span>資料即時更新 • 最後更新: {new Date().toLocaleString('zh-TW')}</span>
+            <span>{t.analyticsDataRealtime} • {t.analyticsLastUpdated}: {new Date().toLocaleString(language === 'zh-TW' ? 'zh-TW' : 'en-US')}</span>
           </div>
         </motion.div>
       </div>

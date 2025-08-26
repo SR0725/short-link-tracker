@@ -15,8 +15,11 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useRef } from "react";
+import { useI18n } from "@/lib/i18n/context";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export default function Home() {
+  const { t } = useI18n();
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
   const heroRef = useRef(null);
@@ -49,65 +52,70 @@ export default function Home() {
   const features = [
     {
       icon: LinkIcon,
-      title: "一鍵生成短網址",
-      description: "自訂或隨機產生，完全由你控制",
+      title: t.feature1Title,
+      description: t.feature1Description,
     },
     {
       icon: BarChart3,
-      title: "即時數據分析",
-      description: "點擊數、來源、時間，一目了然",
+      title: t.feature2Title,
+      description: t.feature2Description,
     },
     {
       icon: Settings2,
-      title: "管理後台",
-      description: "分組、排序、搜尋，井井有條",
+      title: t.feature3Title,
+      description: t.feature3Description,
     },
     {
       icon: Download,
-      title: "QR Code 生成",
-      description: "支援 Logo 與多種樣式選擇",
+      title: t.feature4Title,
+      description: t.feature4Description,
     },
     {
       icon: Shield,
-      title: "個人化 404",
-      description: "自定義錯誤頁面，保持品牌一致",
+      title: t.feature5Title,
+      description: t.feature5Description,
     },
     {
       icon: Database,
-      title: "密碼登入",
-      description: "環境變數配置，安全又簡單",
+      title: t.feature6Title,
+      description: t.feature6Description,
     },
   ];
 
   const whyChooseUs = [
     {
       icon: GitBranch,
-      title: "開源免費",
-      description: "無需付費限制，完全透明",
-      highlight: "100% 開源",
+      title: t.whyChoice1Title,
+      description: t.whyChoice1Description,
+      highlight: t.whyChoice1Highlight,
     },
     {
       icon: Shield,
-      title: "自我掌控",
-      description: "資料存在自己伺服器，不怕被封",
-      highlight: "完全掌控",
+      title: t.whyChoice2Title,
+      description: t.whyChoice2Description,
+      highlight: t.whyChoice2Highlight,
     },
     {
       icon: Zap,
-      title: "輕量部署",
-      description: "Zeabur 一鍵部署，快速上線",
-      highlight: "秒級部署",
+      title: t.whyChoice3Title,
+      description: t.whyChoice3Description,
+      highlight: t.whyChoice3Highlight,
     },
     {
       icon: Settings2,
-      title: "可客製化",
-      description: "程式碼開源，隨你改造",
-      highlight: "無限可能",
+      title: t.whyChoice4Title,
+      description: t.whyChoice4Description,
+      highlight: t.whyChoice4Highlight,
     },
   ];
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Language Switcher */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher size={48} />
+      </div>
+
       {/* Hero Section */}
       <motion.section
         ref={heroRef}
@@ -145,13 +153,13 @@ export default function Home() {
               className="text-6xl md:text-8xl font-black text-black mb-4 tracking-tight"
               variants={itemVariants}
             >
-              你的短網址
+              {t.heroTitle1}
             </motion.h1>
             <motion.h2
               className="text-4xl md:text-6xl font-black text-gray-600 mb-6"
               variants={itemVariants}
             >
-              你自己掌控
+              {t.heroTitle2}
             </motion.h2>
           </motion.div>
 
@@ -159,9 +167,9 @@ export default function Home() {
             variants={itemVariants}
             className="text-xl md:text-2xl text-gray-700 mb-12 max-w-2xl mx-auto leading-relaxed"
           >
-            簡單、自由、開源、可自訂
+            {t.heroSubtitle}
             <br />
-            <span className="text-black font-semibold">不受限於第三方平台</span>
+            <span className="text-black font-semibold">{t.heroDescription}</span>
           </motion.p>
 
           <motion.div variants={itemVariants}>
@@ -170,7 +178,7 @@ export default function Home() {
               size="lg"
               className="text-lg px-12 py-6 bg-black hover:bg-gray-800 text-white rounded-full shadow-2xl hover:shadow-black/25 transition-all duration-300"
             >
-              <Link href="/admin">開始使用</Link>
+              <Link href="/admin">{t.startButton}</Link>
             </Button>
           </motion.div>
         </motion.div>
@@ -196,10 +204,10 @@ export default function Home() {
         >
           <motion.div variants={itemVariants} className="text-center mb-20">
             <h3 className="text-5xl md:text-6xl font-black text-black mb-6">
-              功能亮點
+              {t.featuresTitle}
             </h3>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              一個工具，解決所有短網址需求
+              {t.featuresSubtitle}
             </p>
           </motion.div>
 
@@ -239,10 +247,10 @@ export default function Home() {
         >
           <motion.div variants={itemVariants} className="text-center mb-20">
             <h3 className="text-5xl md:text-6xl font-black text-black mb-6">
-              為什麼選擇我們？
+              {t.whyChooseTitle}
             </h3>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              不只是短網址服務，更是你數位自主的開始
+              {t.whyChooseSubtitle}
             </p>
           </motion.div>
 
@@ -300,7 +308,7 @@ export default function Home() {
             transition={{ delay: 0.2, duration: 0.8 }}
             viewport={{ once: true }}
           >
-            開始掌控你的連結
+            {t.ctaTitle}
           </motion.h3>
 
           <motion.p
@@ -310,7 +318,7 @@ export default function Home() {
             transition={{ delay: 0.4, duration: 0.8 }}
             viewport={{ once: true }}
           >
-            加入數位自主革命，讓每個連結都為你所用
+            {t.ctaDescription}
           </motion.p>
 
           <motion.div
@@ -327,7 +335,7 @@ export default function Home() {
               >
                 <Link href="/admin">
                   <Settings2 className="w-6 h-6 mr-3" />
-                  進入管理後台
+                  {t.ctaAdminButton}
                 </Link>
               </Button>
             <div className="flex items-center gap-4 flex-wrap justify-end md:justify-center">
@@ -338,7 +346,7 @@ export default function Home() {
               >
                 <Link href="https://github.com/SR0725/short-link-tracker">
                   <GitBranch className="w-4 h-4" />
-                  GitHub
+                  {t.ctaGithubButton}
                 </Link>
               </Button>
 
@@ -349,7 +357,7 @@ export default function Home() {
               >
                 <Link href="https://discord.com/invite/fH8BxMWaYb">
                   <MessageCircle className="w-6 h-6 mr-3" />
-                  Discord
+                  {t.ctaDiscordButton}
                 </Link>
               </Button>
             </div>

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface TagSelectorProps {
   value?: string;
@@ -20,10 +21,11 @@ export function TagSelector({
   value = "",
   onChange,
   disabled = false,
-  label = "分組/標籤（選用）",
-  placeholder = "輸入標籤名稱",
+  label,
+  placeholder,
   className = ""
 }: TagSelectorProps) {
+  const { t } = useI18n();
   const [existingTags, setExistingTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -71,7 +73,7 @@ export function TagSelector({
   return (
     <div className={`space-y-3 ${className}`}>
       <Label className="text-base font-semibold text-gray-900">
-        {label}
+        {label || t.tagLabel}
       </Label>
       
       {/* Current selected tag */}
@@ -99,7 +101,7 @@ export function TagSelector({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={placeholder}
+            placeholder={placeholder || t.tagPlaceholder}
             disabled={disabled}
             className="h-12 border-gray-300 focus:border-black focus:ring-black"
           />
@@ -118,7 +120,7 @@ export function TagSelector({
       {/* Existing tags */}
       {!value && existingTags.length > 0 && (
         <div className="space-y-2">
-          <div className="text-sm text-gray-600">或選擇現有標籤：</div>
+          <div className="text-sm text-gray-600">{t.tagExistingLabel}</div>
           <div className="flex flex-wrap gap-2">
             {existingTags.map((tag) => (
               <Button
@@ -139,7 +141,7 @@ export function TagSelector({
 
       {/* Loading state */}
       {isLoading && !value && (
-        <div className="text-sm text-gray-500">載入標籤中...</div>
+        <div className="text-sm text-gray-500">{t.tagLoading}</div>
       )}
     </div>
   );

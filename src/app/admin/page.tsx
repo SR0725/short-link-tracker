@@ -42,6 +42,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { useI18n } from "@/lib/i18n/context";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 interface Link {
   id: string;
@@ -68,6 +70,7 @@ interface ColumnVisibility {
 }
 
 export default function AdminPage() {
+  const { t, language } = useI18n();
   const [links, setLinks] = useState<Link[]>([]);
   const [filteredLinks, setFilteredLinks] = useState<Link[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -228,7 +231,7 @@ export default function AdminPage() {
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      toast.success("已登出");
+      toast.success(language === 'zh-TW' ? "已登出" : "Logged out");
       router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -345,6 +348,11 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Language Switcher */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher size={48} />
+      </div>
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -366,10 +374,10 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-black tracking-tight">
-                    管理中心
+                    {t.adminTitle}
                   </h1>
                   <p className="text-base sm:text-lg lg:text-xl text-gray-600 mt-1">
-                    掌控你的每一個連結
+                    {t.adminSubtitle}
                   </p>
                 </div>
               </div>
@@ -387,7 +395,7 @@ export default function AdminPage() {
                 className="border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-colors"
               >
                 <Settings className="w-5 h-5 mr-2" />
-                設定
+                {t.adminSettings}
               </Button>
               <Button
                 onClick={handleLogout}
@@ -395,7 +403,7 @@ export default function AdminPage() {
                 className="bg-black hover:bg-gray-800 text-white transition-colors"
               >
                 <LogOut className="w-5 h-5 mr-2" />
-                登出
+                {t.adminLogout}
               </Button>
             </motion.div>
           </motion.div>
@@ -412,10 +420,10 @@ export default function AdminPage() {
                   <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center mr-3">
                     <Plus className="w-5 h-5 text-white" />
                   </div>
-                  建立新短網址
+                  {t.adminCreateTitle}
                 </CardTitle>
                 <CardDescription className="text-gray-600 text-lg">
-                  將長網址轉換為簡潔優雅的短連結
+                  {t.adminCreateDescription}
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-0">
@@ -430,7 +438,7 @@ export default function AdminPage() {
                         htmlFor="target-url"
                         className="text-base font-semibold text-gray-900"
                       >
-                        目標網址 *
+                        {t.adminTargetUrl}
                       </Label>
                       <Input
                         id="target-url"
@@ -451,7 +459,7 @@ export default function AdminPage() {
                         htmlFor="custom-slug"
                         className="text-base font-semibold text-gray-900"
                       >
-                        自訂短碼（選用）
+                        {t.adminCustomSlug}
                       </Label>
                       <Input
                         id="custom-slug"
@@ -482,7 +490,7 @@ export default function AdminPage() {
                       ) : (
                         <ChevronDown className="w-5 h-5 mr-2" />
                       )}
-                      {showAdvancedOptions ? "隱藏進階選項" : "顯示進階選項"}
+                      {showAdvancedOptions ? t.adminHideAdvanced : t.adminShowAdvanced}
                     </Button>
                   </div>
 
@@ -502,7 +510,7 @@ export default function AdminPage() {
                               htmlFor="title"
                               className="text-base font-semibold text-gray-900"
                             >
-                              標題/名稱（選用）
+                              {t.adminTitle2}
                             </Label>
                             <Input
                               id="title"
@@ -525,7 +533,7 @@ export default function AdminPage() {
                               htmlFor="expires-at"
                               className="text-base font-semibold text-gray-900"
                             >
-                              到期日（選用）
+                              {t.adminExpiresAt}
                             </Label>
                             <Input
                               id="expires-at"
@@ -541,7 +549,7 @@ export default function AdminPage() {
                               htmlFor="click-limit"
                               className="text-base font-semibold text-gray-900"
                             >
-                              點擊上限（選用）
+                              {t.adminClickLimit}
                             </Label>
                             <Input
                               id="click-limit"
@@ -590,12 +598,12 @@ export default function AdminPage() {
                             }}
                             className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
                           />
-                          建立中...
+                          {t.adminCreating}
                         </div>
                       ) : (
                         <>
                           <Plus className="w-5 h-5 mr-2" />
-                          建立短網址
+                          {t.adminCreateButton}
                         </>
                       )}
                     </Button>
@@ -617,10 +625,10 @@ export default function AdminPage() {
                   <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center mr-3">
                     <BarChart className="w-5 h-5 text-white" />
                   </div>
-                  您的短網址
+                  {t.adminLinksTitle}
                 </CardTitle>
                 <CardDescription className="text-gray-600 text-lg">
-                  管理您建立的短連結並查看分析數據
+                  {t.adminLinksDescription}
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-0">
@@ -633,7 +641,7 @@ export default function AdminPage() {
                   >
                     <Search className="absolute left-3 sm:left-4 top-3 sm:top-4 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                     <Input
-                      placeholder="搜尋標題、標籤、目標網址或短碼..."
+                      placeholder={t.adminSearchPlaceholder}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10 sm:pl-12 h-12 sm:h-14 text-sm sm:text-base border-gray-300 focus:border-black focus:ring-black rounded-xl"
@@ -649,7 +657,7 @@ export default function AdminPage() {
                       className="hidden lg:flex items-center gap-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 h-12 sm:h-14"
                     >
                       <Filter className="w-5 h-5" />
-                      欄位顯示
+                      {t.adminColumnDisplay}
                       <ChevronDown
                         className={`w-5 h-5 transition-transform ${
                           showColumnOptions ? "rotate-180" : ""
@@ -670,7 +678,7 @@ export default function AdminPage() {
                         >
                           <div className="p-6 space-y-4">
                             <div className="text-base font-semibold text-black">
-                              顯示欄位
+                              {t.adminColumnDisplay}
                             </div>
                             <div className="space-y-3">
                               <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
@@ -685,7 +693,7 @@ export default function AdminPage() {
                                   htmlFor="col-title"
                                   className="text-base font-medium"
                                 >
-                                  標題/名稱
+                                  {t.adminColumnTitle}
                                 </Label>
                               </div>
                               <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
@@ -700,7 +708,7 @@ export default function AdminPage() {
                                   htmlFor="col-shortUrl"
                                   className="text-base font-medium"
                                 >
-                                  短網址
+                                  {t.adminColumnShortUrl}
                                 </Label>
                               </div>
                               <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
@@ -715,7 +723,7 @@ export default function AdminPage() {
                                   htmlFor="col-targetUrl"
                                   className="text-base font-medium"
                                 >
-                                  目標網址
+                                  {t.adminColumnTargetUrl}
                                 </Label>
                               </div>
                               <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
@@ -730,7 +738,7 @@ export default function AdminPage() {
                                   htmlFor="col-clickCount"
                                   className="text-base font-medium"
                                 >
-                                  點擊數/上限
+                                  {t.adminColumnClickCount}
                                 </Label>
                               </div>
                               <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
@@ -745,7 +753,7 @@ export default function AdminPage() {
                                   htmlFor="col-expiresAt"
                                   className="text-base font-medium"
                                 >
-                                  到期日
+                                  {t.adminColumnExpiresAt}
                                 </Label>
                               </div>
                               <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
@@ -760,7 +768,7 @@ export default function AdminPage() {
                                   htmlFor="col-lastClickAt"
                                   className="text-base font-medium"
                                 >
-                                  最近點擊
+                                  {t.adminColumnLastClick}
                                 </Label>
                               </div>
                               <div className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
@@ -775,7 +783,7 @@ export default function AdminPage() {
                                   htmlFor="col-createdAt"
                                   className="text-base font-medium"
                                 >
-                                  建立時間
+                                  {t.adminColumnCreatedAt}
                                 </Label>
                               </div>
                             </div>
@@ -795,10 +803,10 @@ export default function AdminPage() {
                       <LinkIcon className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
                     </div>
                     <h3 className="text-lg sm:text-xl font-semibold text-black mb-2">
-                      還沒有短網址
+                      {t.adminNoLinks}
                     </h3>
                     <p className="text-sm sm:text-base text-gray-600">
-                      建立您的第一個短連結開始使用吧！
+                      {t.adminNoLinksDescription}
                     </p>
                   </motion.div>
                 ) : filteredLinks.length === 0 ? (
@@ -811,10 +819,10 @@ export default function AdminPage() {
                       <Search className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
                     </div>
                     <h3 className="text-lg sm:text-xl font-semibold text-black mb-2">
-                      找不到符合條件的連結
+                      {t.adminNoSearchResults}
                     </h3>
                     <p className="text-sm sm:text-base text-gray-600">
-                      試試調整搜尋條件或建立新的短連結
+                      {t.adminNoSearchResultsDescription}
                     </p>
                   </motion.div>
                 ) : (
@@ -835,16 +843,16 @@ export default function AdminPage() {
                                   onClick={() => handleSort("title")}
                                 >
                                   <div className="flex items-center">
-                                    標題/名稱
+                                    {t.adminColumnTitle}
                                     {getSortIcon("title")}
                                   </div>
                                 </TableHead>
                               )}
                               {columnVisibility.shortUrl && (
-                                <TableHead>短網址</TableHead>
+                                <TableHead>{t.adminColumnShortUrl}</TableHead>
                               )}
                               {columnVisibility.targetUrl && (
-                                <TableHead>目標網址</TableHead>
+                                <TableHead>{t.adminColumnTargetUrl}</TableHead>
                               )}
                               {columnVisibility.clickCount && (
                                 <TableHead
@@ -852,7 +860,7 @@ export default function AdminPage() {
                                   onClick={() => handleSort("clickCount")}
                                 >
                                   <div className="flex items-center">
-                                    點擊數/上限
+                                    {t.adminColumnClickCount}
                                     {getSortIcon("clickCount")}
                                   </div>
                                 </TableHead>
@@ -863,7 +871,7 @@ export default function AdminPage() {
                                   onClick={() => handleSort("lastClickAt")}
                                 >
                                   <div className="flex items-center">
-                                    最近點擊
+                                    {t.adminColumnLastClick}
                                     {getSortIcon("lastClickAt")}
                                   </div>
                                 </TableHead>
@@ -874,7 +882,7 @@ export default function AdminPage() {
                                   onClick={() => handleSort("expiresAt")}
                                 >
                                   <div className="flex items-center">
-                                    到期日
+                                    {t.adminColumnExpiresAt}
                                     {getSortIcon("expiresAt")}
                                   </div>
                                 </TableHead>
@@ -885,13 +893,13 @@ export default function AdminPage() {
                                   onClick={() => handleSort("createdAt")}
                                 >
                                   <div className="flex items-center">
-                                    建立時間
+                                    {t.adminColumnCreatedAt}
                                     {getSortIcon("createdAt")}
                                   </div>
                                 </TableHead>
                               )}
                               {columnVisibility.actions && (
-                                <TableHead>操作</TableHead>
+                                <TableHead>{t.adminColumnActions}</TableHead>
                               )}
                             </TableRow>
                           </TableHeader>
@@ -978,11 +986,11 @@ export default function AdminPage() {
                                       <div className="text-sm">
                                         {new Date(
                                           link.lastClickAt
-                                        ).toLocaleDateString("zh-TW")}
+                                        ).toLocaleDateString(language === 'zh-TW' ? "zh-TW" : "en-US")}
                                         <div className="text-xs text-gray-500">
                                           {new Date(
                                             link.lastClickAt
-                                          ).toLocaleTimeString("zh-TW", {
+                                          ).toLocaleTimeString(language === 'zh-TW' ? "zh-TW" : "en-US", {
                                             hour: "2-digit",
                                             minute: "2-digit",
                                           })}
@@ -990,7 +998,7 @@ export default function AdminPage() {
                                       </div>
                                     ) : (
                                       <span className="text-gray-400">
-                                        從未
+                                        {t.adminNever}
                                       </span>
                                     )}
                                   </TableCell>
@@ -1013,11 +1021,11 @@ export default function AdminPage() {
                                       >
                                         {new Date(
                                           link.expiresAt
-                                        ).toLocaleDateString("zh-TW")}
+                                        ).toLocaleDateString(language === 'zh-TW' ? "zh-TW" : "en-US")}
                                       </div>
                                     ) : (
                                       <span className="text-gray-400">
-                                        永久
+                                        {t.adminPermanent}
                                       </span>
                                     )}
                                   </TableCell>
@@ -1027,7 +1035,7 @@ export default function AdminPage() {
                                     <div className="text-sm text-gray-600 dark:text-gray-400">
                                       {new Date(
                                         link.createdAt
-                                      ).toLocaleDateString("zh-TW")}
+                                      ).toLocaleDateString(language === 'zh-TW' ? "zh-TW" : "en-US")}
                                     </div>
                                   </TableCell>
                                 )}
@@ -1063,7 +1071,7 @@ export default function AdminPage() {
                                       >
                                         <BarChart className="w-4 h-4" />
                                         <span className="sm:hidden ml-2">
-                                          分析
+                                          {t.adminAnalytics}
                                         </span>
                                       </Button>
                                       <Button
@@ -1079,7 +1087,7 @@ export default function AdminPage() {
                                         >
                                           <ExternalLink className="w-4 h-4" />
                                           <span className="sm:hidden ml-2">
-                                            訪問
+                                            {t.adminVisit}
                                           </span>
                                         </a>
                                       </Button>
@@ -1096,7 +1104,7 @@ export default function AdminPage() {
                                       >
                                         <Trash2 className="w-4 h-4" />
                                         <span className="sm:hidden ml-2">
-                                          刪除
+                                          {t.adminDelete}
                                         </span>
                                       </Button>
 
@@ -1113,7 +1121,7 @@ export default function AdminPage() {
                                         >
                                           <Copy className="w-4 h-4" />
                                           <span className="sm:hidden ml-2">
-                                            複製
+                                            {t.adminCopy}
                                           </span>
                                         </Button>
                                       )}
@@ -1198,11 +1206,11 @@ export default function AdminPage() {
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                               <div className="bg-gray-50 rounded-lg p-2">
                                 <span className="text-gray-500 font-medium">
-                                  建立時間
+                                  {t.adminCreatedAt}
                                 </span>
                                 <div className="text-gray-700 font-semibold mt-0.5 text-xs">
                                   {new Date(link.createdAt).toLocaleDateString(
-                                    "zh-TW",
+                                    language === 'zh-TW' ? "zh-TW" : "en-US",
                                     { month: "short", day: "numeric" }
                                   )}
                                 </div>
@@ -1211,7 +1219,7 @@ export default function AdminPage() {
                               <div className="bg-gray-50 rounded-lg p-2">
                                 <span className="text-gray-500 font-medium flex items-center gap-1">
                                   <Eye className="w-3 h-3" />
-                                  點擊數 / 點擊上限
+                                  {t.adminColumnClickCount}
                                 </span>
                                 <div className="text-gray-700 font-semibold mt-0.5 text-xs">
                                   {link.clickCount}
@@ -1223,32 +1231,32 @@ export default function AdminPage() {
 
                               <div className="bg-gray-50 rounded-lg p-2">
                                 <span className="text-gray-500 font-medium">
-                                  最近一次點擊
+                                  {t.adminLastClick}
                                 </span>
                                 <div className="text-gray-700 font-semibold mt-0.5 text-xs">
                                   {link.lastClickAt
                                     ? new Date(
                                         link.lastClickAt
-                                      ).toLocaleDateString("zh-TW", {
+                                      ).toLocaleDateString(language === 'zh-TW' ? "zh-TW" : "en-US", {
                                         month: "short",
                                         day: "numeric",
                                       })
-                                    : "從未點擊"}
+                                    : (language === 'zh-TW' ? '從未點擊' : 'Never clicked')}
                                 </div>
                               </div>
                               <div className="bg-gray-50 rounded-lg p-2">
                                 <span className="text-gray-500 font-medium">
-                                  過期時間
+                                  {t.adminColumnExpiresAt}
                                 </span>
                                 <div className="text-gray-700 font-semibold mt-0.5 text-xs">
                                   {link.expiresAt
                                     ? new Date(
                                         link.expiresAt
-                                      ).toLocaleDateString("zh-TW", {
+                                      ).toLocaleDateString(language === 'zh-TW' ? "zh-TW" : "en-US", {
                                         month: "short",
                                         day: "numeric",
                                       })
-                                    : "永久"}
+                                    : t.adminPermanent}
                                 </div>
                               </div>
                             </div>
@@ -1278,7 +1286,7 @@ export default function AdminPage() {
                               >
                                 <BarChart className="w-4 h-4" />
                                 <span className="text-xs font-medium">
-                                  分析
+                                  {t.adminAnalytics}
                                 </span>
                               </Button>
                               <Button
@@ -1294,7 +1302,7 @@ export default function AdminPage() {
                                 >
                                   <ExternalLink className="w-4 h-4" />
                                   <span className="text-xs font-medium">
-                                    訪問
+                                    {t.adminVisit}
                                   </span>
                                 </a>
                               </Button>
@@ -1311,7 +1319,7 @@ export default function AdminPage() {
                               >
                                 <Trash2 className="w-4 h-4" />
                                 <span className="text-xs font-medium">
-                                  刪除
+                                  {t.adminDelete}
                                 </span>
                               </Button>
                             </div>

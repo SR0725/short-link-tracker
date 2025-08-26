@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowLeft, Save, Upload, Trash2, Home, Settings } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
+import { useI18n } from '@/lib/i18n/context'
+import { LanguageSwitcher } from '@/components/language-switcher'
 
 interface Settings {
   id?: string
@@ -23,6 +25,7 @@ interface Settings {
 }
 
 export default function SettingsPage() {
+  const { t } = useI18n()
   const [settings, setSettings] = useState<Settings>({
     defaultQrStyle: 'square',
     custom404Title: '404',
@@ -154,7 +157,7 @@ export default function SettingsPage() {
           >
             <Settings className="w-8 h-8 text-white" />
           </motion.div>
-          <p className="text-xl font-medium text-black">載入設定中...</p>
+          <p className="text-xl font-medium text-black">{t.settingsLoadingSettings}</p>
         </motion.div>
       </div>
     )
@@ -162,6 +165,11 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Language Switcher */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher size={48} />
+      </div>
+      
       <div className="max-w-5xl mx-auto px-8 py-12">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -184,7 +192,7 @@ export default function SettingsPage() {
                 className="border-gray-300 hover:bg-gray-50 hover:border-gray-400"
               >
                 <ArrowLeft className="w-5 h-5 mr-2" />
-                返回儀表板
+                {t.settingsReturnDashboard}
               </Button>
               <div>
                 <div className="flex items-center space-x-4 mb-2">
@@ -193,10 +201,10 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <h1 className="text-4xl lg:text-5xl font-black text-black tracking-tight">
-                      設定中心
+                      {t.settingsTitle}
                     </h1>
                     <p className="text-xl text-gray-600 mt-1">
-                      打造專屬的短網址體驗
+                      {t.settingsSubtitle}
                     </p>
                   </div>
                 </div>
@@ -217,15 +225,15 @@ export default function SettingsPage() {
                     <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center mr-3">
                       <Upload className="w-5 h-5 text-white" />
                     </div>
-                    Logo 設定
+                    {t.settingsLogoTitle}
                   </CardTitle>
                   <CardDescription className="text-gray-600 text-lg">
-                    設定在 QR Code 中央顯示的 Logo 圖片
+                    {t.settingsLogoDescription}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-4">
-                    <Label className="text-base font-semibold text-gray-900">Logo 圖片</Label>
+                    <Label className="text-base font-semibold text-gray-900">{t.settingsLogoImage}</Label>
                     <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
                       {settings.logoUrl && (
                         <motion.div 
@@ -256,7 +264,7 @@ export default function SettingsPage() {
                           className=" file:h-full text-base border-gray-300 focus:border-black focus:ring-black file:mr-4 file:px-6 file:rounded-xl file:border-0 file:text-base file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800"
                         />
                         <p className="text-base text-gray-600">
-                          建議尺寸：100x100 像素，PNG/JPG 格式，檔案大小不超過 2MB
+                          {t.settingsLogoRecommendation}
                         </p>
                       </div>
                     </div>
@@ -277,15 +285,15 @@ export default function SettingsPage() {
                     <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center mr-3">
                       <Settings className="w-5 h-5 text-white" />
                     </div>
-                    QR Code 預設樣式
+                    {t.settingsQrStyleTitle}
                   </CardTitle>
                   <CardDescription className="text-gray-600 text-lg">
-                    選擇新建立短網址時的預設 QR Code 樣式
+                    {t.settingsQrStyleDescription}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-4">
-                    <Label className="text-base font-semibold text-gray-900">預設樣式</Label>
+                    <Label className="text-base font-semibold text-gray-900">{t.settingsQrDefaultStyle}</Label>
                     <Select 
                       value={settings.defaultQrStyle} 
                       onValueChange={(value) => setSettings(prev => ({ ...prev, defaultQrStyle: value }))}
@@ -294,9 +302,9 @@ export default function SettingsPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="square">方形（傳統）</SelectItem>
-                        <SelectItem value="rounded">圓角方形</SelectItem>
-                        <SelectItem value="dots">圓點樣式</SelectItem>
+                        <SelectItem value="square">{t.settingsQrSquare}</SelectItem>
+                        <SelectItem value="rounded">{t.settingsQrRounded}</SelectItem>
+                        <SelectItem value="dots">{t.settingsQrDots}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -316,16 +324,16 @@ export default function SettingsPage() {
                     <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center mr-3">
                       <Home className="w-5 h-5 text-white" />
                     </div>
-                    404 頁面個人化
+                    {t.settings404Title}
                   </CardTitle>
                   <CardDescription className="text-gray-600 text-lg">
-                    自訂當短連結不存在或過期時顯示的頁面內容
+                    {t.settings404Description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-3">
-                      <Label htmlFor="404-title" className="text-base font-semibold text-gray-900">標題</Label>
+                      <Label htmlFor="404-title" className="text-base font-semibold text-gray-900">{t.settings404PageTitle}</Label>
                       <Input
                         id="404-title"
                         value={settings.custom404Title}
@@ -335,7 +343,7 @@ export default function SettingsPage() {
                       />
                     </div>
                     <div className="space-y-3">
-                      <Label htmlFor="404-button-text" className="text-base font-semibold text-gray-900">按鈕文字</Label>
+                      <Label htmlFor="404-button-text" className="text-base font-semibold text-gray-900">{t.settings404ButtonText}</Label>
                       <Input
                         id="404-button-text"
                         value={settings.custom404ButtonText}
@@ -347,7 +355,7 @@ export default function SettingsPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label htmlFor="404-description" className="text-base font-semibold text-gray-900">描述文字</Label>
+                    <Label htmlFor="404-description" className="text-base font-semibold text-gray-900">{t.settings404DescriptionText}</Label>
                     <Textarea
                       id="404-description"
                       value={settings.custom404Description}
@@ -359,7 +367,7 @@ export default function SettingsPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label htmlFor="404-button-url" className="text-base font-semibold text-gray-900">按鈕連結</Label>
+                    <Label htmlFor="404-button-url" className="text-base font-semibold text-gray-900">{t.settings404ButtonUrl}</Label>
                     <Input
                       id="404-button-url"
                       value={settings.custom404ButtonUrl}
@@ -371,7 +379,7 @@ export default function SettingsPage() {
 
                   {/* 404 頁面預覽 */}
                   <div className="mt-8 p-8 border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50">
-                    <h3 className="text-lg font-semibold text-black mb-4">頁面預覽</h3>
+                    <h3 className="text-lg font-semibold text-black mb-4">{t.settings404Preview}</h3>
                     <div className="text-center space-y-4 py-8 bg-white rounded-xl border border-gray-200">
                       {settings.logoUrl && (
                         <motion.img 
@@ -422,12 +430,12 @@ export default function SettingsPage() {
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                         className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-3"
                       />
-                      儲存中...
+                      {t.settingsSaving}
                     </div>
                   ) : (
                     <>
                       <Save className="w-5 h-5 mr-3" />
-                      儲存設定
+                      {t.settingsSave}
                     </>
                   )}
                 </Button>

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { initializeDatabase } from "@/lib/db-init";
 import Footer from "@/components/footer";
+import { Providers } from "@/components/providers";
 import "./globals.css";
 
 // 在生產環境中初始化資料庫
@@ -35,9 +36,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        <Footer />
-        <Toaster />
+        <Providers>
+          {children}
+          <Footer />
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );
