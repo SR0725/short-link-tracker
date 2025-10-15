@@ -4,48 +4,54 @@ import { db } from './db'
 import path from 'path'
 import fs from 'fs'
 
-// 條件式載入 geoip-lite
+// 條件式載入 geoip-lite（根據環境變數控制）
 let geoip: typeof import('geoip-lite') | null = null
-try {
-  // 嘗試多個可能的 geoip 資料路徑
-  const possibleDataPaths = [
-    path.join(process.cwd(), 'node_modules', 'geoip-lite', 'data'),
-    path.join(process.cwd(), 'node_modules', '.pnpm', 'geoip-lite@1.4.10', 'node_modules', 'geoip-lite', 'data'),
-  ]
-  
-  let geoipDataPath: string | null = null
-  for (const dataPath of possibleDataPaths) {
-    const countryDataFile = path.join(dataPath, 'geoip-country.dat')
-    if (fs.existsSync(countryDataFile)) {
-      geoipDataPath = dataPath
-      break
+const GEOIP_ENABLED = process.env.ENABLE_GEOIP_LOOKUP !== 'false'
+
+if (GEOIP_ENABLED) {
+  try {
+    // 嘗試多個可能的 geoip 資料路徑
+    const possibleDataPaths = [
+      path.join(process.cwd(), 'node_modules', 'geoip-lite', 'data'),
+      path.join(process.cwd(), 'node_modules', '.pnpm', 'geoip-lite@1.4.10', 'node_modules', 'geoip-lite', 'data'),
+    ]
+
+    let geoipDataPath: string | null = null
+    for (const dataPath of possibleDataPaths) {
+      const countryDataFile = path.join(dataPath, 'geoip-country.dat')
+      if (fs.existsSync(countryDataFile)) {
+        geoipDataPath = dataPath
+        break
+      }
     }
-  }
-  
-  if (!geoipDataPath) {
-    console.warn('⚠️  GeoIP data files not found in any expected location')
-    throw new Error('GeoIP data files not found')
-  }
-  
-  // 設定環境變數指向正確的資料目錄（在載入模組之前）
-  process.env.GEODATADIR = geoipDataPath
-  
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  geoip = require('geoip-lite')
-  
-  // 驗證 geoip 是否真的可用
-  if (geoip) {
-    const testResult = geoip.lookup('8.8.8.8')
-    if (!testResult) {
-      console.warn('⚠️  GeoIP test lookup failed - data files may be missing')
-      geoip = null
-    } else {
-      console.log('✅ GeoIP loaded successfully with data from:', geoipDataPath)
+
+    if (!geoipDataPath) {
+      console.warn('⚠️  GeoIP data files not found in any expected location')
+      throw new Error('GeoIP data files not found')
     }
+
+    // 設定環境變數指向正確的資料目錄（在載入模組之前）
+    process.env.GEODATADIR = geoipDataPath
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    geoip = require('geoip-lite')
+
+    // 驗證 geoip 是否真的可用
+    if (geoip) {
+      const testResult = geoip.lookup('8.8.8.8')
+      if (!testResult) {
+        console.warn('⚠️  GeoIP test lookup failed - data files may be missing')
+        geoip = null
+      } else {
+        console.log('✅ GeoIP loaded successfully with data from:', geoipDataPath)
+      }
+    }
+  } catch (error) {
+    console.warn('⚠️  GeoIP module not available:', error instanceof Error ? error.message : 'Unknown error')
+    geoip = null
   }
-} catch (error) {
-  console.warn('⚠️  GeoIP module not available:', error instanceof Error ? error.message : 'Unknown error')
-  geoip = null
+} else {
+  console.log('ℹ️  GeoIP lookup disabled by ENABLE_GEOIP_LOOKUP environment variable')
 }
 
 export function generateSlug(length: number = 6): string {
@@ -137,7 +143,27 @@ export function parseUserAgent(userAgent: string) {
 let geoipAvailable: boolean | null = null
 let geoipWarningShown = false
 
-export function getLocationFromIP(ip: string): { country: string | null; city: string | null } {
+/**
+ * 從 CDN headers 取得地理位置資訊（Zeabur）
+ */
+function getGeoFromHeaders(request: Request): { country: string | null; city: string | null } {
+  // Zeabur headers
+  const zeaburCountry = request.headers.get('x-zeabur-ip-country')
+
+  if (zeaburCountry && zeaburCountry !== 'XX') {
+    return {
+      country: zeaburCountry,
+      city: null  // Zeabur 目前不提供城市資訊
+    }
+  }
+
+  return { country: null, city: null }
+}
+
+/**
+ * 從 IP 地址查詢地理位置（使用 geoip-lite）
+ */
+function getLocationFromIP(ip: string): { country: string | null; city: string | null } {
   try {
     // 過濾本地 IP
     if (ip === '127.0.0.1' || ip === '::1' || ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.')) {
@@ -191,19 +217,38 @@ export function getLocationFromIP(ip: string): { country: string | null; city: s
   }
 }
 
+/**
+ * 從 Request 取得地理位置（多層降級策略）
+ * 優先級：CDN Headers > geoip-lite > null
+ */
+export function getLocationFromRequest(request: Request): { country: string | null; city: string | null } {
+  // 優先級 1: 嘗試從 CDN headers 取得
+  const headerGeo = getGeoFromHeaders(request)
+  if (headerGeo.country) {
+    return headerGeo
+  }
+
+  // 優先級 2: 如果啟用了 geoip-lite，從 IP 查詢
+  if (GEOIP_ENABLED && geoipAvailable) {
+    const forwarded = request.headers.get('x-forwarded-for')
+    const realIp = request.headers.get('x-real-ip')
+    const ip = forwarded?.split(',')[0] || realIp || '127.0.0.1'
+
+    return getLocationFromIP(ip)
+  }
+
+  // 優先級 3: 優雅降級
+  return { country: null, city: null }
+}
+
 export async function recordClick(linkId: string, request: Request) {
   const userAgent = request.headers.get('user-agent') || ''
   const referrer = request.headers.get('referer') || null
-  
+
   const { device, browser, os } = parseUserAgent(userAgent)
 
-  
-  // Get IP from various headers (considering proxies)
-  const forwarded = request.headers.get('x-forwarded-for')
-  const realIp = request.headers.get('x-real-ip')
-  const ip = forwarded?.split(',')[0] || realIp || '127.0.0.1'
-  
-  const { country, city } = getLocationFromIP(ip)
+  // 使用多層降級策略取得地理位置
+  const { country, city } = getLocationFromRequest(request)
 
   // Record click and update lastClickAt
   await Promise.all([

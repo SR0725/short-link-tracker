@@ -74,6 +74,7 @@
    | `ADMIN_PASSWORD` | **必要** 管理員密碼 | `your_secure_password` |
    | `JWT_SECRET` | **必要** JWT 簽章密鑰（建議 32+ 字元） | `your-super-secret-jwt-key-here` |
    | `MAXMIND_LICENSE_KEY` | **可選** MaxMind 地理位置授權金鑰，用於根據訪客 IP 識別國家位置 | `your_maxmind_key` |
+   | `ENABLE_GEOIP_LOOKUP` | **可選** 是否啟用本地 GeoIP 資料庫（預設：`true`）。部署在 Zeabur 時，建議設為 `false` 以節省 50-100MB 記憶體 | `false` |
 
    > 💡 **MaxMind 說明**：本服務利用 MaxMind 提供免費的 GeoLite2 資料庫，將訪客的 IP 位址轉換為國家資訊，讓您在分析報表中查看訪客的地理分佈。Maxmind 是完全免費的，如果你不需要取得訪客的國家資料，可以留空。
 

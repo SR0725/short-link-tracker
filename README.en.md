@@ -72,6 +72,7 @@ Click the button above to deploy using Zeabur template with automatic PostgreSQL
    | `ADMIN_PASSWORD` | **Required** Admin password | `your_secure_password` |
    | `JWT_SECRET` | **Required** JWT signing key (recommended 32+ characters) | `your-super-secret-jwt-key-here` |
    | `MAXMIND_LICENSE_KEY` | **Optional** MaxMind geolocation license key for identifying visitor countries by IP | `your_maxmind_key` |
+   | `ENABLE_GEOIP_LOOKUP` | **Optional** Enable local GeoIP database (default: `true`). When deploying on Zeabur, set to `false` to save 50-100MB memory | `false` |
 
    > 💡 **MaxMind Note**: This service uses MaxMind's free GeoLite2 database to convert visitor IP addresses to country information, allowing you to see geographical distribution in analytics reports. MaxMind is completely free - if you don't need visitor country data, you can leave this blank.
 
