@@ -118,11 +118,29 @@ export default function SettingsPage() {
       })
 
       if (response.ok) {
+        // 儲存成功後，重新載入設定以顯示清理後的實際內容
+        const savedData = await response.json()
+        setSettings(savedData)
         toast.success('設定已儲存！')
         setMessage('')
       } else {
-        const data = await response.json()
-        const errorMsg = data.error || '儲存失敗'
+        // 改善錯誤處理，處理非 JSON 回應
+        let errorMsg = '儲存失敗'
+        try {
+          const contentType = response.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json()
+            errorMsg = data.error || '儲存失敗'
+          } else {
+            // 如果不是 JSON，讀取文字內容
+            const text = await response.text()
+            console.error('API 返回非 JSON 回應:', text.substring(0, 200))
+            errorMsg = `伺服器錯誤 (${response.status})`
+          }
+        } catch (parseError) {
+          console.error('解析錯誤回應失敗:', parseError)
+          errorMsg = `伺服器錯誤 (${response.status})`
+        }
         setMessage(errorMsg)
         toast.error(errorMsg)
       }
