@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthStatus } from '@/lib/auth'
 import { createShortUrl } from '@/lib/short-url'
 import { db } from '@/lib/db'
+import { linkSchema, validateInput } from '@/lib/validation'
+import { sanitizeText, sanitizeTag, sanitizeSlug } from '@/lib/sanitize'
 
 export async function GET(request: NextRequest) {
   try {
@@ -88,46 +90,50 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { targetUrl, customSlug, title, tag, expiresAt, clickLimit } = await request.json()
+    const body = await request.json()
 
-    if (!targetUrl) {
+    // 驗證輸入資料
+    const validationResult = validateInput(linkSchema, body)
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Target URL is required' },
+        { error: validationResult.error },
         { status: 400 }
       )
     }
 
-    // Basic URL validation
-    try {
-      new URL(targetUrl)
-    } catch {
-      return NextResponse.json(
-        { error: 'Invalid URL format' },
-        { status: 400 }
-      )
-    }
+    const validatedData = validationResult.data
 
-    const result = await createShortUrl(targetUrl, customSlug, {
-      title,
-      tag,
-      expiresAt: expiresAt ? new Date(expiresAt) : undefined,
-      clickLimit: clickLimit ? parseInt(clickLimit) : undefined
+    // 清理和驗證各個欄位
+    const cleanedTitle = validatedData.title ? sanitizeText(validatedData.title) : null
+    const cleanedTag = validatedData.tag ? sanitizeTag(validatedData.tag) : null
+    const cleanedSlug = validatedData.customSlug ? sanitizeSlug(validatedData.customSlug) : undefined
+
+    // targetUrl 已經通過 Zod 驗證，是有效的 HTTP(S) URL
+    const targetUrl = validatedData.targetUrl
+
+    // 建立短連結
+    const result = await createShortUrl(targetUrl, cleanedSlug, {
+      title: cleanedTitle ?? undefined,
+      tag: cleanedTag ?? undefined,
+      expiresAt: validatedData.expiresAt ? new Date(validatedData.expiresAt) : undefined,
+      clickLimit: validatedData.clickLimit ? Number(validatedData.clickLimit) : undefined
     })
+
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'
-    
+
     return NextResponse.json({
       id: result.id,
       slug: result.slug,
       shortUrl: `${baseUrl}/${result.slug}`,
-      targetUrl,
-      title,
-      tag,
-      expiresAt,
-      clickLimit
+      targetUrl: targetUrl,
+      title: cleanedTitle,
+      tag: cleanedTag,
+      expiresAt: validatedData.expiresAt,
+      clickLimit: validatedData.clickLimit
     })
   } catch (error) {
     console.error('Create link error:', error)
-    
+
     if (error instanceof Error && error.message === 'Slug already exists') {
       return NextResponse.json(
         { error: 'Custom slug already exists' },
