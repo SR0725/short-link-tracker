@@ -54,6 +54,10 @@ spec:
           type: STRING
           name: MaxMind 授權金鑰 (選填)
           description: IP 地理位置服務（MaxMind）的授權金鑰，如不需要可留空（用於分析訪客來源國家）
+        - key: ENABLE_GEOIP_LOOKUP
+          type: STRING
+          name: 啟用本地 GeoIP 查詢 (選填)
+          description: 是否啟用 geoip-lite 進行地理位置查詢。Zeabur 已提供 CDN headers，建議設為 false 以節省 50-100MB 記憶體。設為 false 時：國家資料仍可透過 Zeabur CDN 取得，但城市資料會是空值。留空則預設為 false
     services:
         - name: postgresql
           icon: https://cdn.zeabur.com/marketplace/postgresql.svg
@@ -222,6 +226,9 @@ spec:
                     expose: false
                 MAXMIND_LICENSE_KEY:
                     default: ${MAXMIND_LICENSE_KEY}
+                    expose: false
+                ENABLE_GEOIP_LOOKUP:
+                    default: ${ENABLE_GEOIP_LOOKUP}
                     expose: false
                 PORT:
                     default: ${WEB_PORT}
