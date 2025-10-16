@@ -267,6 +267,39 @@ export interface Translations {
   analyticsClicksTooltipText: string;
   analyticsClicksTooltipLabel: string;
   analyticsPercentOfTotal: string;
+
+  // Validation error messages
+  validationRequired: string;
+  validationFieldName404Title: string;
+  validationFieldName404Description: string;
+  validationFieldName404ButtonText: string;
+  validationFieldName404ButtonUrl: string;
+  validationFieldNameLogoUrl: string;
+  validationFieldNameTargetUrl: string;
+  validationFieldNameCustomSlug: string;
+  validationFieldNameTitle: string;
+  validationFieldNameTag: string;
+  validationFieldNameExpiresAt: string;
+  validationFieldNameClickLimit: string;
+  validationTitleEmpty: string;
+  validationTitleMaxLength: string;
+  validationDescriptionEmpty: string;
+  validationDescriptionMaxLength: string;
+  validationButtonTextEmpty: string;
+  validationButtonTextMaxLength: string;
+  validationButtonUrlInvalid: string;
+  validationLogoUrlInvalid: string;
+  validationTargetUrlRequired: string;
+  validationTargetUrlInvalid: string;
+  validationCustomSlugInvalid: string;
+  validationTitleMaxLength200: string;
+  validationTagMaxLength50: string;
+  validationDateTimeInvalid: string;
+  validationTagInvalid: string;
+  validationImageRequired: string;
+  validationImageFormatInvalid: string;
+  validationContainsDisallowedContent: string;
+  validationSlugExists: string;
 }
 
 export const translations: Record<Language, Translations> = {
@@ -529,6 +562,39 @@ export const translations: Record<Language, Translations> = {
     analyticsClicksTooltipText: '次點擊',
     analyticsClicksTooltipLabel: '點擊數',
     analyticsPercentOfTotal: '佔總數',
+
+    // Validation error messages
+    validationRequired: '為必填',
+    validationFieldName404Title: '404 標題',
+    validationFieldName404Description: '404 描述',
+    validationFieldName404ButtonText: '按鈕文字',
+    validationFieldName404ButtonUrl: '按鈕連結',
+    validationFieldNameLogoUrl: '網站 Logo',
+    validationFieldNameTargetUrl: '目標網址',
+    validationFieldNameCustomSlug: '自訂短網址',
+    validationFieldNameTitle: '標題',
+    validationFieldNameTag: '標籤',
+    validationFieldNameExpiresAt: '過期時間',
+    validationFieldNameClickLimit: '點擊限制',
+    validationTitleEmpty: '標題不能為空',
+    validationTitleMaxLength: '標題最多 100 字元',
+    validationDescriptionEmpty: '描述不能為空',
+    validationDescriptionMaxLength: '描述最多 500 字元',
+    validationButtonTextEmpty: '按鈕文字不能為空',
+    validationButtonTextMaxLength: '按鈕文字最多 50 字元',
+    validationButtonUrlInvalid: '請輸入有效的網址（http:// 或 https://）或相對路徑（如 /）',
+    validationLogoUrlInvalid: '請上傳有效的圖片',
+    validationTargetUrlRequired: '目標網址為必填',
+    validationTargetUrlInvalid: '請輸入有效的網址（必須以 http:// 或 https:// 開頭）',
+    validationCustomSlugInvalid: '只能包含英文字母、數字、連字號和底線',
+    validationTitleMaxLength200: '標題最多 200 字元',
+    validationTagMaxLength50: '標籤最多 50 字元',
+    validationDateTimeInvalid: '日期時間格式不正確',
+    validationTagInvalid: '標籤只能包含字母、數字、中文、連字號、底線和空格',
+    validationImageRequired: '圖片資料為必填',
+    validationImageFormatInvalid: '圖片格式不正確',
+    validationContainsDisallowedContent: '包含不允許的內容，請使用純文字',
+    validationSlugExists: '此自訂短網址已被使用',
   },
   'en': {
     siteTitle: 'Short Link Tracker',
@@ -789,5 +855,38 @@ export const translations: Record<Language, Translations> = {
     analyticsClicksTooltipText: 'clicks',
     analyticsClicksTooltipLabel: 'Clicks',
     analyticsPercentOfTotal: 'of total',
+
+    // Validation error messages
+    validationRequired: 'is required',
+    validationFieldName404Title: '404 Title',
+    validationFieldName404Description: '404 Description',
+    validationFieldName404ButtonText: 'Button Text',
+    validationFieldName404ButtonUrl: 'Button URL',
+    validationFieldNameLogoUrl: 'Logo',
+    validationFieldNameTargetUrl: 'Target URL',
+    validationFieldNameCustomSlug: 'Custom Slug',
+    validationFieldNameTitle: 'Title',
+    validationFieldNameTag: 'Tag',
+    validationFieldNameExpiresAt: 'Expires At',
+    validationFieldNameClickLimit: 'Click Limit',
+    validationTitleEmpty: 'Title cannot be empty',
+    validationTitleMaxLength: 'Title cannot exceed 100 characters',
+    validationDescriptionEmpty: 'Description cannot be empty',
+    validationDescriptionMaxLength: 'Description cannot exceed 500 characters',
+    validationButtonTextEmpty: 'Button text cannot be empty',
+    validationButtonTextMaxLength: 'Button text cannot exceed 50 characters',
+    validationButtonUrlInvalid: 'Please enter a valid URL (http:// or https://) or relative path (e.g., /)',
+    validationLogoUrlInvalid: 'Please upload a valid image',
+    validationTargetUrlRequired: 'Target URL is required',
+    validationTargetUrlInvalid: 'Please enter a valid URL (must start with http:// or https://)',
+    validationCustomSlugInvalid: 'Can only contain letters, numbers, hyphens, and underscores',
+    validationTitleMaxLength200: 'Title cannot exceed 200 characters',
+    validationTagMaxLength50: 'Tag cannot exceed 50 characters',
+    validationDateTimeInvalid: 'Invalid date/time format',
+    validationTagInvalid: 'Tag can only contain letters, numbers, Chinese characters, hyphens, underscores, and spaces',
+    validationImageRequired: 'Image data is required',
+    validationImageFormatInvalid: 'Invalid image format',
+    validationContainsDisallowedContent: 'Contains disallowed content, please use plain text only',
+    validationSlugExists: 'This custom slug already exists',
   }
 };

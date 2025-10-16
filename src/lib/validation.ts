@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { translations, type Language } from './i18n'
 
 /**
  * 設定驗證 schema
@@ -112,31 +113,67 @@ export const imageUploadSchema = z.object({
 export type ImageUploadInput = z.infer<typeof imageUploadSchema>
 
 /**
- * 欄位名稱對照表（程式碼名稱 -> 友善的中文名稱）
+ * 取得欄位的本地化名稱
  */
-const fieldNameMap: Record<string, string> = {
-  'custom404Title': '404 標題',
-  'custom404Description': '404 描述',
-  'custom404ButtonText': '按鈕文字',
-  'custom404ButtonUrl': '按鈕連結',
-  'logoUrl': '網站 Logo',
-  'targetUrl': '目標網址',
-  'customSlug': '自訂短網址',
-  'title': '標題',
-  'tag': '標籤',
-  'expiresAt': '過期時間',
-  'clickLimit': '點擊限制'
+function getFieldName(fieldName: string, lang: Language): string {
+  const t = translations[lang]
+  const fieldNameMap: Record<string, string> = {
+    'custom404Title': t.validationFieldName404Title,
+    'custom404Description': t.validationFieldName404Description,
+    'custom404ButtonText': t.validationFieldName404ButtonText,
+    'custom404ButtonUrl': t.validationFieldName404ButtonUrl,
+    'logoUrl': t.validationFieldNameLogoUrl,
+    'targetUrl': t.validationFieldNameTargetUrl,
+    'customSlug': t.validationFieldNameCustomSlug,
+    'title': t.validationFieldNameTitle,
+    'tag': t.validationFieldNameTag,
+    'expiresAt': t.validationFieldNameExpiresAt,
+    'clickLimit': t.validationFieldNameClickLimit
+  }
+  return fieldNameMap[fieldName] || fieldName
+}
+
+/**
+ * 取得驗證錯誤訊息的翻譯
+ */
+function getValidationMessage(message: string, lang: Language): string {
+  const t = translations[lang]
+
+  // 根據錯誤訊息的關鍵字來匹配對應的翻譯
+  const messageMap: Record<string, string> = {
+    'Logo URL must be a valid data URL or HTTP(S) URL': t.validationLogoUrlInvalid,
+    'Button URL must be a valid relative path or HTTP(S) URL': t.validationButtonUrlInvalid,
+    '標題不能為空': t.validationTitleEmpty,
+    '標題最多 100 字元': t.validationTitleMaxLength,
+    '描述不能為空': t.validationDescriptionEmpty,
+    '描述最多 500 字元': t.validationDescriptionMaxLength,
+    '按鈕文字不能為空': t.validationButtonTextEmpty,
+    '按鈕文字最多 50 字元': t.validationButtonTextMaxLength,
+    '目標網址為必填': t.validationTargetUrlRequired,
+    '請輸入有效的網址（必須以 http:// 或 https:// 開頭）': t.validationTargetUrlInvalid,
+    '只能包含英文字母、數字、連字號和底線': t.validationCustomSlugInvalid,
+    '標題最多 200 字元': t.validationTitleMaxLength200,
+    '標籤最多 50 字元': t.validationTagMaxLength50,
+    '日期時間格式不正確': t.validationDateTimeInvalid,
+    'Tag can only contain letters, numbers, Chinese characters, hyphens, underscores, and spaces': t.validationTagInvalid,
+    'Image data is required': t.validationImageRequired,
+    'Invalid image data format': t.validationImageFormatInvalid
+  }
+
+  return messageMap[message] || message
 }
 
 /**
  * 驗證輸入並返回清理後的資料
  * @param schema - Zod schema
  * @param data - 要驗證的資料
+ * @param lang - 語言（預設為 zh-TW）
  * @returns 驗證和清理後的資料，或錯誤訊息
  */
 export function validateInput<T>(
   schema: z.ZodSchema<T>,
-  data: unknown
+  data: unknown,
+  lang: Language = 'zh-TW'
 ): { success: true; data: T } | { success: false; error: string } {
   const result = schema.safeParse(data)
 
@@ -144,27 +181,11 @@ export function validateInput<T>(
     return { success: true, data: result.data }
   }
 
-  // 處理驗證錯誤，生成友善的中文訊息
+  // 處理驗證錯誤，生成本地化的友善訊息
   const errorMessages = result.error.issues.map((issue) => {
     const fieldName = issue.path[0] as string
-    const friendlyName = fieldNameMap[fieldName] || fieldName
-
-    // 如果錯誤訊息還是英文，需要翻譯
-    let message = issue.message
-
-    // 翻譯英文錯誤訊息
-    if (message.includes('Button URL must be a valid relative path or HTTP(S) URL')) {
-      message = '請輸入有效的網址（http:// 或 https://）或相對路徑（如 /）'
-    } else if (message.includes('Logo URL must be a valid data URL or HTTP(S) URL')) {
-      message = '請上傳有效的圖片'
-    } else if (message.includes('Invalid datetime format')) {
-      message = '日期時間格式不正確'
-    }
-
-    // 如果訊息已經是中文，或者已經包含欄位名稱，直接顯示
-    if (message.startsWith('請') || message.startsWith('只能') || message.includes('必填')) {
-      return `${friendlyName}：${message}`
-    }
+    const friendlyName = getFieldName(fieldName, lang)
+    const message = getValidationMessage(issue.message, lang)
 
     return `${friendlyName}：${message}`
   }).join('、')

@@ -17,7 +17,7 @@ interface Settings {
 }
 
 export default function NotFoundPage() {
-  const { t, language } = useI18n()
+  const { language } = useI18n()
   const [settings, setSettings] = useState<Settings>({
     custom404Title: '404',
     custom404Description: '您尋找的短連結不存在或可能已被移除。',

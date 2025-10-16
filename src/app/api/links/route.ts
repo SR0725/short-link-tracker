@@ -4,6 +4,8 @@ import { createShortUrl } from '@/lib/short-url'
 import { db } from '@/lib/db'
 import { linkSchema, validateInput } from '@/lib/validation'
 import { sanitizeText, sanitizeTag, sanitizeSlug } from '@/lib/sanitize'
+import { getLanguageFromRequest } from '@/lib/i18n/server'
+import { translations } from '@/lib/i18n'
 
 export async function GET(request: NextRequest) {
   try {
@@ -92,8 +94,11 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
 
+    // 獲取用戶語言偏好
+    const lang = getLanguageFromRequest(request)
+
     // 驗證輸入資料
-    const validationResult = validateInput(linkSchema, body)
+    const validationResult = validateInput(linkSchema, body, lang)
     if (!validationResult.success) {
       return NextResponse.json(
         { error: validationResult.error },
@@ -134,9 +139,13 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Create link error:', error)
 
+    // 獲取語言偏好以返回本地化錯誤訊息
+    const lang = getLanguageFromRequest(request)
+    const t = translations[lang]
+
     if (error instanceof Error && error.message === 'Slug already exists') {
       return NextResponse.json(
-        { error: 'Custom slug already exists' },
+        { error: t.validationSlugExists },
         { status: 400 }
       )
     }

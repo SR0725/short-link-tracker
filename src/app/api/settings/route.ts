@@ -3,6 +3,8 @@ import { getAuthStatus } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { settingsSchema, validateInput } from '@/lib/validation'
 import { sanitizeText, sanitizeUrl, sanitizeBase64Image } from '@/lib/sanitize'
+import { getLanguageFromRequest } from '@/lib/i18n/server'
+import { translations } from '@/lib/i18n'
 
 export async function GET() {
   try {
@@ -45,8 +47,12 @@ export async function PUT(request: NextRequest) {
 
     const body = await request.json()
 
+    // 獲取用戶語言偏好
+    const lang = getLanguageFromRequest(request)
+    const t = translations[lang]
+
     // 驗證輸入資料
-    const validationResult = validateInput(settingsSchema, body)
+    const validationResult = validateInput(settingsSchema, body, lang)
     if (!validationResult.success) {
       return NextResponse.json(
         { error: validationResult.error },
@@ -67,7 +73,7 @@ export async function PUT(request: NextRequest) {
         const sanitizedLogo = sanitizeBase64Image(validatedData.logoUrl)
         if (!sanitizedLogo) {
           return NextResponse.json(
-            { error: 'Invalid logo image format' },
+            { error: `${t.validationFieldNameLogoUrl}：${t.validationLogoUrlInvalid}` },
             { status: 400 }
           )
         }
@@ -86,7 +92,7 @@ export async function PUT(request: NextRequest) {
       // 如果清理後變成空字串，拒絕儲存並提示用戶
       if (cleaned.length === 0 && validatedData.custom404Title.length > 0) {
         return NextResponse.json(
-          { error: '404 標題包含不允許的內容，請使用純文字' },
+          { error: `${t.validationFieldName404Title}：${t.validationContainsDisallowedContent}` },
           { status: 400 }
         )
       }
@@ -97,22 +103,22 @@ export async function PUT(request: NextRequest) {
       const cleaned = sanitizeText(validatedData.custom404Description)
       if (cleaned.length === 0 && validatedData.custom404Description.length > 0) {
         return NextResponse.json(
-          { error: '404 描述包含不允許的內容，請使用純文字' },
+          { error: `${t.validationFieldName404Description}：${t.validationContainsDisallowedContent}` },
           { status: 400 }
         )
       }
-      cleanedData.custom404Description = cleaned || '您尋找的短連結不存在或可能已被移除。'
+      cleanedData.custom404Description = cleaned || (lang === 'zh-TW' ? '您尋找的短連結不存在或可能已被移除。' : 'The short link you are looking for does not exist or may have been removed.')
     }
 
     if (validatedData.custom404ButtonText !== undefined) {
       const cleaned = sanitizeText(validatedData.custom404ButtonText)
       if (cleaned.length === 0 && validatedData.custom404ButtonText.length > 0) {
         return NextResponse.json(
-          { error: '按鈕文字包含不允許的內容，請使用純文字' },
+          { error: `${t.validationFieldName404ButtonText}：${t.validationContainsDisallowedContent}` },
           { status: 400 }
         )
       }
-      cleanedData.custom404ButtonText = cleaned || '返回首頁'
+      cleanedData.custom404ButtonText = cleaned || (lang === 'zh-TW' ? '返回首頁' : 'Back to Home')
     }
 
     // 清理和驗證 URL
@@ -120,7 +126,7 @@ export async function PUT(request: NextRequest) {
       const sanitizedUrl = sanitizeUrl(validatedData.custom404ButtonUrl)
       if (!sanitizedUrl) {
         return NextResponse.json(
-          { error: 'Invalid button URL format' },
+          { error: `${t.validationFieldName404ButtonUrl}：${t.validationButtonUrlInvalid}` },
           { status: 400 }
         )
       }
