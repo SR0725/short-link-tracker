@@ -1,0 +1,102 @@
+# 部署到 AWS 正式主機：push main → 建 linux/arm64 映像 → 推 ECR → 主機上健康檢查通過才切換。
+# 這份是 SR0725/ray-infra 的 .github/workflows/deploy-service.yml 的複本（公開 repo 不能直接 uses 私有 repo 的 workflow），
+# 改那邊的時候這裡也要跟著改。服務設定正本在 ray-infra 的 hosts/prod/short-link-tracker/。
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: ray-deploy-short-link-tracker-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 45
+    env:
+      AWS_REGION: ap-east-2
+      REGISTRY: 672253573137.dkr.ecr.ap-east-2.amazonaws.com
+      SERVICE: short-link-tracker
+    steps:
+      - name: 決定環境和版本
+        id: meta
+        run: |
+          case "$GITHUB_REF_NAME" in
+            main) env=prod ;;
+            dev) env=staging ;;
+            *) echo "::error::只有 main（prod）和 dev（staging）會部署，現在是 ${GITHUB_REF_NAME}"; exit 1 ;;
+          esac
+          [[ "$SERVICE" =~ ^[a-z0-9][a-z0-9-]{0,62}$ ]] || { echo "::error::service 格式不對：${SERVICE}"; exit 1; }
+          {
+            echo "env=${env}"
+            echo "version=${GITHUB_SHA::12}"
+          } >> "$GITHUB_OUTPUT"
+          echo "部署 ${SERVICE} ${GITHUB_SHA::12} 到 ${env}" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::672253573137:role/ray-gha-deploy-${{ steps.meta.outputs.env }}
+          role-session-name: gha-${{ github.run_id }}
+          aws-region: ap-east-2
+
+      - uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
+
+      - name: 同一個 commit 的映像已經存在就不重建
+        id: exists
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          if aws ecr describe-images --repository-name "ray/${SERVICE}" --image-ids "imageTag=${VERSION}" >/dev/null 2>&1; then
+            echo "hit=true" >> "$GITHUB_OUTPUT"; echo "映像 ${VERSION} 已存在，略過建置"
+          else
+            echo "hit=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+        if: steps.exists.outputs.hit != 'true'
+
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        if: steps.exists.outputs.hit != 'true'
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/arm64
+          push: true
+          provenance: false
+          tags: ${{ env.REGISTRY }}/ray/short-link-tracker:${{ steps.meta.outputs.version }}
+          cache-from: type=gha,scope=short-link-tracker
+          cache-to: type=gha,mode=max,scope=short-link-tracker
+
+      - name: 在主機上部署（健康檢查通過才切換）
+        env:
+          ENV: ${{ steps.meta.outputs.env }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          iid="$(aws ec2 describe-instances --filters "Name=tag:RayEnv,Values=${ENV}" Name=instance-state-name,Values=running \
+            --query 'Reservations[].Instances[].InstanceId' --output text)"
+          [[ -n "$iid" && "$iid" != None ]] || { echo "::error::找不到正在執行的 ${ENV} 主機"; exit 1; }
+          cmd="$(aws ssm send-command --instance-ids "$iid" --document-name Ray-Deploy \
+            --comment "${GITHUB_REPOSITORY} run ${GITHUB_RUN_ID}" \
+            --parameters "service=${SERVICE},version=${VERSION},env=${ENV},actor=github-actions,source=${GITHUB_REPOSITORY}@${GITHUB_RUN_ID}" \
+            --query Command.CommandId --output text)"
+          echo "SSM command ${cmd} → ${iid}"
+          status=Pending
+          for _ in $(seq 1 360); do
+            status="$(aws ssm get-command-invocation --command-id "$cmd" --instance-id "$iid" --query Status --output text 2>/dev/null || echo Pending)"
+            case "$status" in Pending|InProgress|Delayed) sleep 5 ;; *) break ;; esac
+          done
+          aws ssm get-command-invocation --command-id "$cmd" --instance-id "$iid" \
+            --query '[StandardOutputContent,StandardErrorContent]' --output text
+          if [[ "$status" != Success ]]; then
+            echo "::error::部署失敗（${status}），舊版仍在服務"
+            exit 1
+          fi
+          echo "✅ ${SERVICE} ${VERSION} 已上線 ${ENV}" >> "$GITHUB_STEP_SUMMARY"
