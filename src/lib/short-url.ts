@@ -144,7 +144,7 @@ let geoipAvailable: boolean | null = null
 let geoipWarningShown = false
 
 /**
- * 從 CDN headers 取得地理位置資訊（Zeabur）
+ * 從 CDN headers 取得地理位置資訊（Zeabur、Cloudflare）
  */
 function getGeoFromHeaders(request: Request): { country: string | null; city: string | null } {
   // Zeabur headers
@@ -154,6 +154,17 @@ function getGeoFromHeaders(request: Request): { country: string | null; city: st
     return {
       country: zeaburCountry,
       city: null  // Zeabur 目前不提供城市資訊
+    }
+  }
+
+  // Cloudflare headers（搬到 AWS 後流量經 Cloudflare Tunnel 進來，沒有 Zeabur 的 header）
+  // XX：查不到；T1：Tor
+  const cloudflareCountry = request.headers.get('cf-ipcountry')
+
+  if (cloudflareCountry && cloudflareCountry !== 'XX' && cloudflareCountry !== 'T1') {
+    return {
+      country: cloudflareCountry,
+      city: null  // Cloudflare 免費方案只提供國家
     }
   }
 
