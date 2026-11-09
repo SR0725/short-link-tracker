@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ${{ vars.RAY_RUNNER == 'github' && 'ubuntu-24.04-arm' || fromJSON('["self-hosted","mac-mini"]') }}  # Mac mini；repo 變數 RAY_RUNNER=github 時改回 GitHub 代管
     timeout-minutes: 45
     env:
       AWS_REGION: ap-east-2
